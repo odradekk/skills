@@ -26,19 +26,23 @@ The **frontier** is every open question whose prerequisites are settled.
 
 ## 2. Ask in rounds
 
-Open the first round by restating the topic in two or three sentences, without a solution, as the first question, so the user can correct the framing. Add the frontier questions whose answers do not depend on that framing.
+Open the first round by restating the topic in two or three sentences, without a solution, as the first question, so the user can correct the framing. Add the frontier questions that stay the same however the user corrects the framing.
 
-Each round asks the whole frontier, numbered. Each question names its options with what each costs and buys, and gives your recommendation with its reason:
+Each round asks the whole frontier, numbered. A question with options names each option with what it costs and buys, and gives your recommendation with its reason. An open question, such as what else worries the user, has no options and no recommendation. When one question asks the user to rate several items the same way, such as blocking or suggestion for each candidate check, put the items in a table with your recommendation for each. From the second round on, start with the decisions that the previous answers settled.
 
 ```markdown
-**Settled since the last round:** <one line per decision>
+**Settled since the last round:** <one line per decision; from the second round on>
 
 **Q1. <title>**
 <the question, and each option with what it costs and buys>
 Recommended: <option>, because <reason>.
 
 **Q2. <title>**
-...
+<what the items are rated on>
+
+| Item | Recommended | Why |
+|---|---|---|
+| <item> | <option> | <reason> |
 ```
 
 Then wait for the answers. Each answer reshapes the tree, so recompute the frontier before the next round. A question that depends on another question still open in the same round belongs to a later round.
