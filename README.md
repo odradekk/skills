@@ -6,9 +6,10 @@ Development-workflow skills for coding agents, adapted from the agent workflow o
 |---|---|
 | [`setup-agent-workflow`](skills/setup-agent-workflow/SKILL.md) | Detects a repository's base branch, hooks, CI, and narrowest checks, proves each check by running it, and writes the Agent workflow section. |
 | [`decision-notes`](skills/decision-notes/SKILL.md) | Agent-written RFCs in `<lifecycle>/<class>/YYYY-MM-DD-slug.md`, moving through proposed, implemented, rejected, and frozen archived states, with a supersession check on every new note and a verifier script. |
+| [`grill-decision`](skills/grill-decision/SKILL.md) | Interviews the user in rounds of questions with recommended answers until a decision and its alternatives are settled, then drafts the decision notes from the session. The interview method is adapted from the `grilling` skill in [mattpocock/skills](https://github.com/mattpocock/skills) (MIT). |
 | [`pre-push-checks`](skills/pre-push-checks/SKILL.md) | Maps each outgoing change to its narrowest check and runs it once, leaving exhaustive coverage to CI. |
 
-`decision-notes` and `pre-push-checks` read the section that `setup-agent-workflow` writes, and `pre-push-checks` calls the `decision-notes` verifier, so install the three together.
+The skills read the section that `setup-agent-workflow` writes and call one another: `grill-decision` hands its drafts to `decision-notes`, and `pre-push-checks` runs the `decision-notes` verifier. Install them together.
 
 ## Layout
 
