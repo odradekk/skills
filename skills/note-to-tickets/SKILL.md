@@ -19,7 +19,7 @@ The note ID is the note's filename without `.md`. It stays the same when the not
 
 ## 1. Read the settings and the note
 
-Read the `Decision notes` and `Tracker` lines of the repository's `## Agent workflow` section; if the section is missing, run the `setup-agent-workflow` skill first. When the tracker is `none`, tell the user that this repository has no tracker to publish to, and stop.
+Read the `Decision notes`, `Tracker`, and `Labels` lines of the repository's `## Agent workflow` section; if the section is missing, run the `setup-agent-workflow` skill first. When the tracker is `none`, tell the user that this repository has no tracker to publish to, and stop.
 
 Only a note in `proposed/` gets tickets: implemented work is done, and rejected work is not built. Read the whole note and the code its Proposal touches. Then look for tickets that already reference the note:
 
@@ -81,13 +81,15 @@ Decision note: <note ID>
 - Constraints that the note already fixes, such as a data format or an interface, are cited by note ID and section name ("see the Wire format section of `<note ID>`"), not copied.
 - Code appears only when a prototype settled something that prose states less precisely, such as a state machine or a schema; quote only the part that carries the decision.
 
-The note's reasons, implementation steps, estimates, priorities, due dates, assignees, and parent issues stay out of the ticket. When a ticket needs a human, for credentials, a design approval, or a deployment, that step is one of its acceptance criteria. Every other ticket gets the `ready-for-agent` label.
+The note's reasons, implementation steps, estimates, priorities, due dates, assignees, and parent issues stay out of the ticket. When a ticket needs a human, for credentials, a design approval, or a deployment, that step is one of its acceptance criteria.
+
+Label each ticket from the `Labels` line: one `kind/*` label, by default the note's class, so a prefactor ticket in a feature proposal is `kind/simplification`; and every `area/*` label whose paths the ticket's work touches, judged from its starting points and the code it will change. Use only the listed labels; when none fits, tell the user that the section needs a refresh through `setup-agent-workflow` before publishing.
 
 Revise every title and body with the `plain-language` skill. The implementer starts without your context, so run its new-reader check over the full set of drafts.
 
 ## 5. Confirm with the user
 
-Publishing creates issues that other people can see, so show the plan first: the numbered drafts with title, goal, blocking edges, out-of-scope work, and label; the map from the note's acceptance criteria to tickets; and, when the tracker lacks the `ready-for-agent` label, that you will create it. Ask whether the granularity and the blocking edges are right, and whether any ticket should be split or merged. Revise until the user approves.
+Publishing creates issues that other people can see, so show the plan first: the numbered drafts with title, goal, blocking edges, out-of-scope work, and labels; and the map from the note's acceptance criteria to tickets. Ask whether the granularity and the blocking edges are right, and whether any ticket should be split or merged. Revise until the user approves.
 
 Done when the user has approved the drafts.
 
@@ -96,14 +98,13 @@ Done when the user has approved the drafts.
 Create the tickets in dependency order, blockers first. Write each body to a temporary file outside the repository:
 
 ```sh
-gh label create ready-for-agent --description "Ready for an agent to implement"   # only when missing
-gh issue create --title "<title>" --body-file <file> --label ready-for-agent
-glab issue create --title "<title>" --description-file <file> --label ready-for-agent
+gh issue create --title "<title>" --body-file <file> --label "<kind>" --label "<area>"
+glab issue create --title "<title>" --description-file <file> --label "<kind>,<area>"
 ```
 
-Leave out `--label` for tickets that need a human. After every ticket exists, replace the draft numbers in the bodies with the real issue numbers (`gh issue edit <N> --body-file <file>`, `glab issue update <N> --description-file <file>`). The note stays unchanged.
+After every ticket exists, replace the draft numbers in the bodies with the real issue numbers (`gh issue edit <N> --body-file <file>`, `glab issue update <N> --description-file <file>`). The note stays unchanged.
 
-Done when every approved ticket exists, its references use real issue numbers, and the step 1 search for the note ID returns all of them.
+Done when every approved ticket exists with its labels, its references use real issue numbers, and the step 1 search for the note ID returns all of them.
 
 ## Trace
 
