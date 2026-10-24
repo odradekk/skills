@@ -83,6 +83,8 @@ Decision note: <note ID>
 
 The note's reasons, implementation steps, estimates, priorities, due dates, assignees, and parent issues stay out of the ticket. When a ticket needs a human, for credentials, a design approval, or a deployment, that step is one of its acceptance criteria. Every other ticket gets the `ready-for-agent` label.
 
+Revise every title and body with the `plain-language` skill. The implementer starts without your context, so run its new-reader check over the full set of drafts.
+
 ## 5. Confirm with the user
 
 Publishing creates issues that other people can see, so show the plan first: the numbered drafts with title, goal, blocking edges, out-of-scope work, and label; the map from the note's acceptance criteria to tickets; and, when the tracker lacks the `ready-for-agent` label, that you will create it. Ask whether the granularity and the blocking edges are right, and whether any ticket should be split or merged. Revise until the user approves.

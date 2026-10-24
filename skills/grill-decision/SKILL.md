@@ -69,7 +69,7 @@ Map the session onto the sections of the `decision-notes` format:
 
 A session that settled several independent decisions, each with its own trade-off, produces one note per decision; a sub-decision that depends on one choice stays in that choice's note. Write each note as current-state prose about the decision and its reasons. Round numbers, attributions such as "the user said", and the course of the interview stay out of the note.
 
-Show the drafts, with the lifecycle and class folder you chose for each, and wait for the user to confirm them.
+Revise the drafts with the `plain-language` skill, then show them, with the lifecycle and class folder you chose for each, and wait for the user to confirm them.
 
 ## 5. Record them
 

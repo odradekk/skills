@@ -5,7 +5,7 @@ description: Create or refresh a repository's Agent workflow section in AGENTS.m
 
 # Set up the agent workflow
 
-The workflow skills carry method; the `## Agent workflow` section carries one repository's facts. It caches what an agent cannot look up in one step: which branch is the base, where decision notes live and in which language, which tracker holds tickets, what hooks and CI already run, and which command is the narrowest check for each kind of change. Lookups that take one file or one command, such as the script list in `package.json`, stay in the environment.
+The workflow skills carry method; the `## Agent workflow` section carries one repository's facts. It caches what an agent cannot look up in one step: which branch is the base, where decision notes live and in which language, which tracker holds tickets, the house style for prose, what hooks and CI already run, and which command is the narrowest check for each kind of change. Lookups that take one file or one command, such as the script list in `package.json`, stay in the environment.
 
 ## The section
 
@@ -19,6 +19,7 @@ Maintained with the `setup-agent-workflow` skill. Edit values freely; keep the f
 - Base branch: `main`
 - Decision notes: `docs/decisions/`, written in English. Every decision record, ADRs included, is a decision note written with the `decision-notes` skill. Files under `docs/decisions/archived/` are frozen history: read them as history and leave them unchanged.
 - Tracker: GitHub issues on `origin`, through `gh`. Tickets for decision notes follow the `note-to-tickets` skill. A commit for a ticket says `Refs #N`, and the pull request that completes it says `Fixes #N`. The pull request that closes a note's last open ticket also moves the note to `implemented/`.
+- Prose: documents, decision notes, tickets, pull request descriptions, and commit bodies are revised with the `plain-language` skill. House style: sentence-case headings; straight quotes in English text.
 - Hooks: pre-commit runs `lint-staged` (ESLint and Prettier on staged files); no pre-push hook.
 - CI: GitHub Actions `ci.yml` runs lint, typecheck, and the full test suite on Linux and Windows for every pull request.
 
@@ -56,6 +57,7 @@ Read each value from a file or a command:
 - **CI:** `.github/workflows/`, `.gitlab-ci.yml`, and other CI configuration. Record which checks run on pull requests and on which platforms.
 - **Tracker:** GitHub issues when `origin` is on GitHub and `gh repo view --json hasIssuesEnabled` reports `true`; GitLab issues when `origin` is on GitLab and `glab` is installed; otherwise `none`, which leaves the line as `Tracker: none` without the ticket conventions.
 - **Existing decision records:** `docs/adr/`, `docs/decisions/`, `adr/`, `doc/adr/`, `.agents/notes/`, `docs/rfcs/`, or ADR-style files elsewhere.
+- **House style:** the prose rules that a style guide (such as `CONTRIBUTING.md` or a docs style page) or a prose linter configuration (such as `.vale.ini` or `.markdownlint*`) states. Record only stated rules; with none, write `House style: none`.
 - **Notes language:** the language of the repository's existing docs.
 
 Done when every field has a value backed by a file or command output, or is listed as a question for the user.

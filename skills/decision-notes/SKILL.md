@@ -73,7 +73,7 @@ The body opens with `## Problem`, written so it stands without the solution. Eac
 - **Consequences:** what the trade-off cost and what it bought.
 - **Alternatives considered:** each genuine alternative and why it lost, one paragraph per alternative that starts with the alternative in bold. A decision recorded without the options it beat gets argued again. Record the alternatives that were really weighed.
 
-A section may be one sentence; its length follows the decision. Headings stay in English whatever the body language, because the verifier matches them.
+A section may be one sentence; its length follows the decision. Headings stay in English whatever the body language, because the verifier matches them. Revise every note you write or rewrite with the `plain-language` skill, including its new-reader check.
 
 ## Write a new note
 
