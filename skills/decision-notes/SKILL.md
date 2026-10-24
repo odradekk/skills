@@ -92,7 +92,7 @@ A section may be one sentence; its length follows the decision. Headings stay in
 
 When the work needs more than one pull request, split the proposal into tickets with the `note-to-tickets` skill.
 
-In the change that ships the work (with tickets, the pull request that closes the last open one), move the note from `proposed/` to `implemented/`, keeping its class and filename. Set `Status: implemented`. Rewrite `## Proposal` as a present-tense `## Decision` about what shipped. Fold `## Acceptance criteria` and `## Risks` into `## Consequences`, or into a present-tense `## Testing` section that names what pins the behavior. Replace plans with what was built. Work that is only partly built stays in `proposed/`. When the proposal has tickets, its open tickets show what remains and the Proposal keeps the whole plan; without tickets, update the Proposal to what remains.
+In the change that ships the work (with tickets, the change that closes the last open one), move the note from `proposed/` to `implemented/`, keeping its class and filename. Set `Status: implemented`. Rewrite `## Proposal` as a present-tense `## Decision` about what shipped. Fold `## Acceptance criteria` and `## Risks` into `## Consequences`, or into a present-tense `## Testing` section that names what pins the behavior. Replace plans with what was built. Work that is only partly built stays in `proposed/`. When the proposal has tickets, its open tickets show what remains and the Proposal keeps the whole plan; without tickets, update the Proposal to what remains.
 
 ## Keep implemented notes current
 

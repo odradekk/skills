@@ -12,7 +12,7 @@ Each link is written once, where it is created; the reverse direction comes from
 | Link | Written in | Reverse lookup |
 |---|---|---|
 | Ticket → note | The ticket's first line: `Decision note: <note ID>` | Search tickets for the note ID |
-| Commit or pull request → ticket | `Refs #N` in commits; `Fixes #N` in the pull request that completes the ticket | The tracker lists them on the ticket |
+| Pull request → ticket | `Fixes #N` in the description of the pull request that completes the ticket; work committed straight to the base branch carries `Refs #N` or `Fixes #N` in its commit messages instead | The tracker lists them on the ticket |
 | Pull request → note | The pull request that implements the proposal moves or edits the note | `git log --follow` on the note |
 
 The note ID is the note's filename without `.md`. It stays the same when the note moves between lifecycle folders, so links by ID never break. The note itself lists none of its tickets.
@@ -119,8 +119,10 @@ From a ticket: read its first line for the note ID (`gh issue view <N> --json bo
 
 ```sh
 gh issue view <N> --json state,closedByPullRequestsReferences   # pull requests that close it
-glab api projects/:id/issues/<N>/closed_by                       # the same on GitLab
-git log --all -E --grep='#<N>([^0-9]|$)' --format='%h %as %s'   # commits that reference it
+gh pr view <PR> --json commits --jq '.commits[] | "\(.oid[:9]) \(.messageHeadline)"'   # the commits of each one
+glab api projects/:id/issues/<N>/closed_by                       # merge requests that close it, on GitLab
+glab api projects/:id/merge_requests/<MR>/commits                # the commits of each one
+git log --all -E --grep='#<N>([^0-9]|$)' --format='%h %as %s'   # commits made straight to the base branch
 ```
 
 Report the note's lifecycle folder, each ticket with its state, and the pull requests and commits under each ticket.
