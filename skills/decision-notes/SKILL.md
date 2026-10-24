@@ -35,6 +35,8 @@ The **class** folder is the kind of decision, from this closed set:
 
 The date is the day the topic was first proposed; for an existing topic, take it from git history. The slug is lowercase kebab-case. Dates instead of sequence numbers let parallel branches add notes without collisions. Notes link to each other with relative Markdown links, which the verifier checks. The folder tree is the index; keep no separate index file.
 
+The filename without `.md` is the note's **ID**. It stays the same when the note moves between folders, so tickets and commits refer to the note by ID. A note lists none of its tickets, pull requests, or commits: they point to the note instead (see the `note-to-tickets` skill).
+
 ## When to write one
 
 Write or update a note in the same change only for lasting rationale that code, tests, and existing docs do not carry:
@@ -88,7 +90,9 @@ A section may be one sentence; its length follows the decision. Headings stay in
 
 ## Implement a proposal
 
-In the change that ships the work, move the note from `proposed/` to `implemented/`, keeping its class and filename. Set `Status: implemented`. Rewrite `## Proposal` as a present-tense `## Decision` about what shipped. Fold `## Acceptance criteria` and `## Risks` into `## Consequences`, or into a present-tense `## Testing` section that names what pins the behavior. Replace plans with what was built. Work that is only partly built stays in `proposed/`, with the Proposal updated to what remains.
+When the work needs more than one pull request, split the proposal into tickets with the `note-to-tickets` skill.
+
+In the change that ships the work (with tickets, the pull request that closes the last open one), move the note from `proposed/` to `implemented/`, keeping its class and filename. Set `Status: implemented`. Rewrite `## Proposal` as a present-tense `## Decision` about what shipped. Fold `## Acceptance criteria` and `## Risks` into `## Consequences`, or into a present-tense `## Testing` section that names what pins the behavior. Replace plans with what was built. Work that is only partly built stays in `proposed/`. When the proposal has tickets, its open tickets show what remains and the Proposal keeps the whole plan; without tickets, update the Proposal to what remains.
 
 ## Keep implemented notes current
 
@@ -96,7 +100,7 @@ When a change moves, renames, or alters something an implemented note names, suc
 
 ## Reject a proposal
 
-Move the note to `rejected/<class>/` and set `Status: rejected — <reason>`. The body stays as it was proposed.
+Move the note to `rejected/<class>/` and set `Status: rejected — <reason>`. The body stays as it was proposed. Close the proposal's open tickets, if any, with the reason and the note ID.
 
 ## Retire notes
 

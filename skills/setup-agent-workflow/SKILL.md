@@ -5,7 +5,7 @@ description: Create or refresh a repository's Agent workflow section in AGENTS.m
 
 # Set up the agent workflow
 
-The workflow skills carry method; the `## Agent workflow` section carries one repository's facts. It caches what an agent cannot look up in one step: which branch is the base, where decision notes live and in which language, what hooks and CI already run, and which command is the narrowest check for each kind of change. Lookups that take one file or one command, such as the script list in `package.json`, stay in the environment.
+The workflow skills carry method; the `## Agent workflow` section carries one repository's facts. It caches what an agent cannot look up in one step: which branch is the base, where decision notes live and in which language, which tracker holds tickets, what hooks and CI already run, and which command is the narrowest check for each kind of change. Lookups that take one file or one command, such as the script list in `package.json`, stay in the environment.
 
 ## The section
 
@@ -18,6 +18,7 @@ Maintained with the `setup-agent-workflow` skill. Edit values freely; keep the f
 
 - Base branch: `main`
 - Decision notes: `docs/decisions/`, written in English. Every decision record, ADRs included, is a decision note written with the `decision-notes` skill. Files under `docs/decisions/archived/` are frozen history: read them as history and leave them unchanged.
+- Tracker: GitHub issues on `origin`, through `gh`. Tickets for decision notes follow the `note-to-tickets` skill. A commit for a ticket says `Refs #N`, and the pull request that completes it says `Fixes #N`. The pull request that closes a note's last open ticket also moves the note to `implemented/`.
 - Hooks: pre-commit runs `lint-staged` (ESLint and Prettier on staged files); no pre-push hook.
 - CI: GitHub Actions `ci.yml` runs lint, typecheck, and the full test suite on Linux and Windows for every pull request.
 
@@ -53,6 +54,7 @@ Read each value from a file or a command:
 - **Toolchain:** the manifests at the root and in each workspace package (`package.json` scripts, `Makefile`, `justfile`, `Taskfile.yml`, `pyproject.toml`, `tox.ini`, `noxfile.py`, `Cargo.toml`, `go.mod`, `*.sln` or `*.csproj`, `build.gradle`, `pom.xml`, `CMakeLists.txt`) and the test directory layout.
 - **Hooks:** `git config core.hooksPath`, `.husky/`, `lefthook.yml`, `.pre-commit-config.yaml`, and non-sample files in `.git/hooks/`. Record what each hook runs.
 - **CI:** `.github/workflows/`, `.gitlab-ci.yml`, and other CI configuration. Record which checks run on pull requests and on which platforms.
+- **Tracker:** GitHub issues when `origin` is on GitHub and `gh repo view --json hasIssuesEnabled` reports `true`; GitLab issues when `origin` is on GitLab and `glab` is installed; otherwise `none`, which leaves the line as `Tracker: none` without the ticket conventions.
 - **Existing decision records:** `docs/adr/`, `docs/decisions/`, `adr/`, `doc/adr/`, `.agents/notes/`, `docs/rfcs/`, or ADR-style files elsewhere.
 - **Notes language:** the language of the repository's existing docs.
 
@@ -72,7 +74,7 @@ Done when every row was run, or is a broad command you confirmed exists.
 
 ### 5. Confirm with the user
 
-Show the drafted section, or on a refresh only the differences from the current one. Ask all open questions in one message: the base branch when detection was ambiguous, the notes directory (an existing records directory, otherwise `docs/decisions/`), the notes language, and, when records in another format exist, whether to migrate them now.
+Show the drafted section, or on a refresh only the differences from the current one. Ask all open questions in one message: the base branch when detection was ambiguous, the tracker, the notes directory (an existing records directory, otherwise `docs/decisions/`), the notes language, and, when records in another format exist, whether to migrate them now.
 
 Done when the user has approved the section.
 
