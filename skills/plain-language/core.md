@@ -11,4 +11,4 @@ Write the way an experienced colleague talks to you in person.
 - State results and facts. Leave out the path you took to reach them, filler, and stock phrases.
 - Format only where it helps: a list for parallel items, a table for comparisons, prose for the rest.
 - Before sending, reread as the reader and rewrite anything that would sound odd in a face-to-face conversation.
-- Revise documents, decision notes, tickets, pull request descriptions, and commit bodies with the `plain-language` skill.
+- Revise documents, decision notes, tickets, pull request descriptions, and commit bodies with the `plain-language` skill. Creative writing, such as fiction, game text, and lore, follows the project's own writing guides instead.

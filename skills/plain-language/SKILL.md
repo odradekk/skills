@@ -7,6 +7,8 @@ description: Revise writing so it reads the way an experienced colleague talks, 
 
 A reader should get the main point on the first reading, follow the reasoning without gaps, and meet only words the reader already uses. More text is not better: every redundant or unrelated passage buries the point and costs the reader time.
 
+Creative writing, such as fiction, game dialogue and scripts, and setting or lore documents, is outside this skill: its wording is part of the content, and it follows the project's own writing guides.
+
 This skill is the revision pass. Write the draft from the principles in [core.md](core.md), which also belong in every agent's always-loaded instructions, then revise it here: the whole text first, then its sentences. Models fall back into the same habits while drafting, so the checking happens after the draft exists.
 
 ## Protected text
