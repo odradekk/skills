@@ -1,1 +1,3 @@
 skills/setup-agent-workflow/scripts/pre-commit-file-size text eol=lf
+skills/setup-agent-workflow/scripts/commit-msg-attribution text eol=lf
+skills/setup-agent-workflow/scripts/pre-push-attribution text eol=lf
