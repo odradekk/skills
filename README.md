@@ -4,7 +4,7 @@ Development-workflow skills for coding agents, adapted from the agent workflow o
 
 | Skill | Purpose |
 |---|---|
-| [`setup-agent-workflow`](skills/setup-agent-workflow/SKILL.md) | Detects a repository's base branch, hooks, CI, and narrowest checks, proves each check by running it, and writes the Agent workflow section. |
+| [`setup-agent-workflow`](skills/setup-agent-workflow/SKILL.md) | Detects a repository's base branch, hooks, CI, and narrowest checks, proves each check by running it, and writes the Agent workflow section. Can also install a pre-commit check that keeps files under a token budget, with a baseline for older large files. |
 | [`decision-notes`](skills/decision-notes/SKILL.md) | Agent-written RFCs in `<lifecycle>/<class>/YYYY-MM-DD-slug.md`, moving through proposed, implemented, rejected, and frozen archived states, with a supersession check on every new note and a verifier script. |
 | [`grill-decision`](skills/grill-decision/SKILL.md) | Interviews the user in rounds of questions with recommended answers until a decision and its alternatives are settled, then drafts the decision notes from the session. The interview method is adapted from the `grilling` skill in [mattpocock/skills](https://github.com/mattpocock/skills) (MIT). |
 | [`note-to-tickets`](skills/note-to-tickets/SKILL.md) | Splits a proposed decision note into tickets on GitHub or GitLab, one pull request each, and traces a note or ticket to its issues, pull requests, and commits. Tickets point to the note by ID and commits point to tickets, so each link is stored once and the reverse direction is a query. |
@@ -27,11 +27,12 @@ skills/<name>/scripts/      scripts a skill runs
 ## Requirements
 
 - git
-- Python 3.10 or later, standard library only, for `skills/decision-notes/scripts/verify_notes.py`
+- Python 3.10 or later, standard library only, for the scripts in `skills/*/scripts/`
 - `gh` or `glab`, for `note-to-tickets`
 
 ## Development
 
 ```sh
 python -m unittest discover -s skills/decision-notes/scripts
+python -m unittest discover -s skills/setup-agent-workflow/scripts
 ```

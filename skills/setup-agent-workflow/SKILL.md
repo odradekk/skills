@@ -1,6 +1,6 @@
 ---
 name: setup-agent-workflow
-description: Create or refresh a repository's Agent workflow section in AGENTS.md, the per-repository settings that the decision-notes and pre-push-checks skills read. Use when the user asks to set up or update the agent workflow for a repository, or when another skill finds the section missing or out of date.
+description: Create or refresh a repository's Agent workflow section in AGENTS.md, the per-repository settings that the decision-notes and pre-push-checks skills read, and optionally install a pre-commit check that keeps files small enough for agents to read whole. Use when the user asks to set up or update the agent workflow for a repository or to limit file size, or when another skill finds the section missing or out of date.
 ---
 
 # Set up the agent workflow
@@ -20,8 +20,9 @@ Maintained with the `setup-agent-workflow` skill. Edit values freely; keep the f
 - Decision notes: `docs/decisions/`, written in English. Every decision record, ADRs included, is a decision note written with the `decision-notes` skill. Files under `docs/decisions/archived/` are frozen history: read them as history and leave them unchanged.
 - Tracker: GitHub issues on `origin`, through `gh`. Tickets for decision notes follow the `note-to-tickets` skill. A commit for a ticket says `Refs #N`, and the pull request that completes it says `Fixes #N`. The pull request that closes a note's last open ticket also moves the note to `implemented/`.
 - Prose: documents, decision notes, tickets, pull request descriptions, and commit bodies are revised with the `plain-language` skill. House style: sentence-case headings; straight quotes in English text.
-- Hooks: pre-commit runs `lint-staged` (ESLint and Prettier on staged files); no pre-push hook.
-- CI: GitHub Actions `ci.yml` runs lint, typecheck, and the full test suite on Linux and Windows for every pull request.
+- File size: files stay under 5,000 tokens (bytes / 4) so an agent can read them whole. `.file-size.json` lists excluded paths, exceptions with their reasons, and the baseline of older files over the limit, which may shrink but not grow. The pre-commit hook and CI run `scripts/check_file_size.py`.
+- Hooks: pre-commit runs `lint-staged` (ESLint and Prettier on staged files) and `scripts/check_file_size.py`; no pre-push hook.
+- CI: GitHub Actions `ci.yml` runs lint, typecheck, the file size check, and the full test suite on Linux and Windows for every pull request.
 
 | Change | Narrowest check |
 |---|---|
@@ -59,6 +60,7 @@ Read each value from a file or a command:
 - **Existing decision records:** `docs/adr/`, `docs/decisions/`, `adr/`, `doc/adr/`, `.agents/notes/`, `docs/rfcs/`, or ADR-style files elsewhere.
 - **House style:** the prose rules that a style guide (such as `CONTRIBUTING.md` or a docs style page) or a prose linter configuration (such as `.vale.ini` or `.markdownlint*`) states. Record only stated rules; with none, write `House style: none`.
 - **Notes language:** the language of the repository's existing docs.
+- **File size check:** whether `.file-size.json` and the check script already exist. On a refresh, `python scripts/check_file_size.py --all` shows whether the repository still passes.
 
 Done when every field has a value backed by a file or command output, or is listed as a question for the user.
 
@@ -76,13 +78,13 @@ Done when every row was run, or is a broad command you confirmed exists.
 
 ### 5. Confirm with the user
 
-Show the drafted section, or on a refresh only the differences from the current one. Ask all open questions in one message: the base branch when detection was ambiguous, the tracker, the notes directory (an existing records directory, otherwise `docs/decisions/`), the notes language, and, when records in another format exist, whether to migrate them now.
+Show the drafted section, or on a refresh only the differences from the current one. Ask all open questions in one message: the base branch when detection was ambiguous, the tracker, the notes directory (an existing records directory, otherwise `docs/decisions/`), the notes language, when records in another format exist, whether to migrate them now, and, when the file size check is not installed, whether to install it, with the preview described in [references/file-size-check.md](references/file-size-check.md).
 
 Done when the user has approved the section.
 
 ### 6. Write
 
-Write the section and the `CLAUDE.md` import planned in step 1. Leave the notes directory uncreated: the `decision-notes` skill creates folders when it writes the first note. If the user chose to migrate existing records, follow "Adopt existing records" in the `decision-notes` skill. Leave the changes uncommitted unless the user asked for a commit.
+Write the section and the `CLAUDE.md` import planned in step 1. Leave the notes directory uncreated: the `decision-notes` skill creates folders when it writes the first note. If the user chose to migrate existing records, follow "Adopt existing records" in the `decision-notes` skill. If the user chose the file size check, install it as [references/file-size-check.md](references/file-size-check.md) describes. Leave the changes uncommitted unless the user asked for a commit.
 
 ### 7. Report
 
