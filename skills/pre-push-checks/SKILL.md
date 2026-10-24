@@ -17,7 +17,7 @@ Read the `## Agent workflow` section of the repository's `AGENTS.md`: base branc
 git status --short --branch
 ```
 
-The base is the open pull request's base branch when one exists (`gh pr view --json baseRefName --jq .baseRefName`, or `glab mr view` on GitLab); otherwise it is the configured base branch. Fetch it and take the merge base:
+The base is the open pull request's base branch when one exists (read it from the platform that hosts `origin`, for example `gh pr view --json baseRefName --jq .baseRefName`); otherwise it is the configured base branch. Fetch it and take the merge base:
 
 ```sh
 git fetch origin <base>

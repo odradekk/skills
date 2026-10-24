@@ -1,6 +1,6 @@
 ---
 name: pr
-description: Push the current branch and open its pull request on GitHub or merge request on GitLab, or update an existing one, with a description written for reviewers, without asking for confirmation. Use when the user asks to open, create, or update a pull or merge request, and when another skill needs one opened.
+description: Push the current branch and open its pull request, or merge request, on the platform that hosts the repository, or update an existing one, with a description written for reviewers, without asking for confirmation. Use when the user asks to open, create, or update a pull or merge request, and when another skill needs one opened.
 ---
 
 # Pull request
@@ -14,11 +14,9 @@ Read the repository's `## Agent workflow` section for the base branch, Tracker, 
 ```sh
 git status --porcelain=v1 --branch
 git rev-list --count origin/<base>..HEAD
-gh pr view --json number,url,state,title,body      # an open pull request for this branch, if any
-glab mr view --output json                          # the same on GitLab
 ```
 
-The platform is the Tracker line's, or else the host of `origin`. When `gh auth status` or `glab auth status` fails, stop and give the user the login command.
+Pull requests live on the platform that hosts `origin`; reach it through its command-line tool or MCP tools. Look for an open pull request for this branch, for example `gh pr view --json number,url,state,title,body`. When the tool is not signed in, stop and tell the user how to sign in.
 
 - **HEAD is detached, or the current branch is the base branch:** stop and report; a pull request needs its own branch.
 - **No commits ahead of the base:** stop and report.
@@ -42,7 +40,7 @@ The title is the subject of the only commit, or else a summary in the same style
 
 The description is for reviewers, written in the notes language from the Agent workflow section, headings included:
 
-- **Why:** the problem in one or two sentences. `Fixes #N` for each ticket the pull request completes, `Refs #N` for related ones, and the decision note ID when it implements a note.
+- **Why:** the problem in one or two sentences. The tracker's closing reference from the Tracker line, such as `Fixes #N`, for each ticket the pull request completes; the plain ticket reference for related ones; and the decision note ID when it implements a note.
 - **What changed:** the changes to behavior, interfaces, configuration, and stored data that a reviewer must know, grouped by area. The pull request already lists the commits; describe the change, not the commit list.
 - **Testing:** the commands that step 2 ran, with their results, and what no check covers.
 - **Notes for reviewers**, only when there is something to say: risks, where to start reading, follow-up work.
@@ -51,23 +49,17 @@ Revise the description with the `plain-language` skill. It carries no AI attribu
 
 ## 4. Create or update
 
-Labels come from the Labels line: one `kind/*` and every `area/*` that the changed paths and the completed tickets call for. Mark the pull request as a draft, or add reviewers and assignees, only when the user asked for it. Write the description to a temporary file outside the repository.
+When the platform has the labels from the Labels line, add one `kind/*` and every `area/*` that the changed paths and the completed tickets call for. Mark the pull request as a draft, or add reviewers and assignees, only when the user asked for it. Write the description to a temporary file outside the repository.
 
-To create:
+To create, for example with `gh`:
 
 ```sh
 gh pr create --base <base> --title "<title>" --body-file <file> --label "<kind>" --label "<area>"
-glab mr create --target-branch <base> --title "<title>" --description-file <file> --label "<kind>,<area>" --yes
 ```
 
-To update an existing pull request after new commits or a review round, rewrite only the sections the new work changed, and keep the text and media that people added. Then:
+To update an existing pull request after new commits or a review round, rewrite only the sections the new work changed, and keep the text and media that people added. Then update its title, description, and labels, for example with `gh pr edit <N> --title "<title>" --body-file <file> --add-label "<label>" --remove-label "<label>"`.
 
-```sh
-gh pr edit <N> --title "<title>" --body-file <file> --add-label "<label>" --remove-label "<label>"
-glab mr update <N> --title "<title>" --description-file <file> --label "<label>" --unlabel "<label>"
-```
-
-Done when the pull request exists with the current title, description, and labels.
+Done when reading the pull request back from the platform shows the current title, description, and labels.
 
 ## 5. Report
 

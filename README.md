@@ -10,7 +10,7 @@ Development-workflow skills for coding agents, adapted from the agent workflow o
 | [`decision-notes`](skills/decision-notes/SKILL.md) | Agent-written RFCs in `<lifecycle>/<class>/YYYY-MM-DD-slug.md`, moving through proposed, implemented, rejected, and frozen archived states, with a supersession check on every new note and a verifier script. |
 | [`grill`](skills/grill/SKILL.md) | Interviews the user in rounds of numbered questions with recommended answers until every decision that matters is settled or deferred, and returns a record of what was settled, what was rejected and why, and what was deferred. Other skills call it with their own settled ground and required answers. The interview method is adapted from the `grilling` skill in [mattpocock/skills](https://github.com/mattpocock/skills) (MIT). |
 | [`grill-decision`](skills/grill-decision/SKILL.md) | Grounds a decision in the repository's existing notes, settles it with the user through `grill`, and turns the record into decision notes. |
-| [`note-to-tickets`](skills/note-to-tickets/SKILL.md) | Splits a proposed decision note into tickets on GitHub or GitLab, one pull request each, and traces a note or ticket to its issues, pull requests, and commits. Tickets point to the note by ID and commits point to tickets, so each link is stored once and the reverse direction is a query. |
+| [`note-to-tickets`](skills/note-to-tickets/SKILL.md) | Splits a proposed decision note into tickets on the repository's tracker, one pull request each, and traces a note or ticket to its tickets, pull requests, and commits. Tickets point to the note by ID, blocking edges use the tracker's own relation when it has one, and pull requests point to tickets, so each link is stored once and the reverse direction is a query. |
 | [`plain-language`](skills/plain-language/SKILL.md) | Revises documents, notes, tickets, pull request descriptions, and reports so they read the way an experienced colleague talks: a clear main point and line of reasoning, nothing redundant or off the point, established terms instead of coined ones, and no unexplained abbreviations, working labels, literal translations, or verbal tics. Includes Chinese and English pattern references and a new-reader check. |
 | [`pre-push-checks`](skills/pre-push-checks/SKILL.md) | Maps each outgoing change to its narrowest check and runs it once, leaving exhaustive coverage to CI. |
 | [`commit`](skills/commit/SKILL.md) | Commits the current changes as Conventional Commits grouped by intent, in the repository's own style, without asking for confirmation. Leaves out files that look like secrets or accidents, and stops only for conflicts or hook failures it did not cause. |
@@ -37,7 +37,7 @@ skills/<name>/scripts/      scripts a skill runs
 
 - git
 - Python 3.10 or later, standard library only, for the scripts in `skills/*/scripts/`
-- `gh` or `glab`, for `note-to-tickets`
+- The command-line tool or MCP tools of the tracker and of the platform that hosts the repository, for `note-to-tickets` and `pr`. The skills give `gh` examples; the Tracker line of each repository's Agent workflow section names its tools.
 
 ## Development
 

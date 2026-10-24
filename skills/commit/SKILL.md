@@ -42,7 +42,7 @@ Give each group a Conventional Commits type: `feat`, `fix`, `refactor`, `perf`, 
 
 - **Subject:** `<type>(<scope>): <summary>`, in the format and language of the repository's recent subjects, such as `feat(story): 接入阿莎姬的羁绊剧情`. Without a history to follow, use the notes language from the `## Agent workflow` section, or English. Imperative, at most 72 characters, no final period.
 - **Body:** only when the subject cannot carry why the change was made or what a reader must know; wrap it at about 72 characters. Write it by the principles of the `plain-language` skill.
-- **Ticket references:** only for work committed straight to the base branch, which has no pull request to carry them: `Refs #N`, or `Fixes #N` in the commit that completes the ticket, as the Tracker line says. On any other branch, the pull request carries them.
+- **Ticket references:** only for work committed straight to the base branch, which has no pull request to carry them: the ticket reference from the Tracker line, such as `Refs #N`, or its closing reference, such as `Fixes #N`, in the commit that completes the ticket. On any other branch, the pull request carries them.
 - **No AI attribution:** no co-author trailer for an AI tool, no "Generated with" line, no session link. A commit-msg hook may remove them too; write the message without them.
 
 ## 5. Commit each group

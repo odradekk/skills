@@ -11,12 +11,11 @@ Names are lowercase kebab-case after the prefix. All kinds share one color and a
 
 ## Detect, for step 2
 
-List the labels the tracker has now, with how many issues use each:
+List the labels the tracker has now, with how many issues use each, through the tool the Tracker line names. For example, with `gh`:
 
 ```sh
 gh label list --limit 200 --json name,description
 gh issue list --label "<name>" --state all --limit 1000 --json number --jq length
-glab label list --output json
 ```
 
 Draft the areas from the repository's top-level structure. For each existing label, plan one outcome:
@@ -31,18 +30,16 @@ Show the kinds with their meanings, the areas with their paths, and the plan for
 
 ## Apply, for step 6
 
-This changes the tracker, so apply only the plan the user approved.
+This changes the tracker, so apply only the plan the user approved: create each new label with its description, rename in place where the tracker allows it so the label keeps its issues, and for a merge add the new label to every issue of the old one before deleting the old one. For example, with `gh`:
 
 ```sh
 gh label create "kind/feature" --color "<hex>" --description "<meaning>"
 gh label edit "bug" --name "kind/bug-fix" --description "<meaning>"
-gh issue edit <N> --add-label "kind/bug-fix"      # for a merge, on each issue of the old label
-gh label delete "<old>" --yes                      # for a merge, after its issues have the new label
-glab label create --name "kind/feature" --color "#<hex>" --description "<meaning>"
-glab label edit --label-id <ID> --new-name "kind/bug-fix"   # IDs from glab label list --output json
+gh issue edit <N> --add-label "kind/bug-fix"
+gh label delete "<old>" --yes
 ```
 
-Record the scheme in the section's `Labels` line. Done when every label the line lists exists on the tracker with its description, and every approved rename and merge is complete.
+Record the scheme in the section's `Labels` line. Done when listing the tracker's labels again shows every label the line lists with its description, and every approved rename and merge is complete.
 
 ## Refresh
 

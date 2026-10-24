@@ -60,7 +60,7 @@ Report these as suggestions; they do not block a merge.
 
 ## Workflow checks
 
-- The change meets the acceptance criteria of its ticket. A pull request that completes the ticket says `Fixes #N` in its description; work committed straight to `<base branch>` carries `Refs #N`, or `Fixes #N` in the completing commit, in its commit messages instead. Source: the Tracker line in `AGENTS.md`.
+- The change meets the acceptance criteria of its ticket. A pull request that completes the ticket carries the tracker's closing reference, such as `Fixes #N`, in its description; work committed straight to `<base branch>` carries the ticket reference, or the closing reference in the completing commit, in its commit messages instead. Source: the Tracker line in `AGENTS.md`.
 - A change that closes the last open ticket of a decision note moves the note to `implemented/`. Source: the Tracker line in `AGENTS.md`.
 - A change to something an implemented decision note describes updates that note in the same change. Source: the Decision notes line in `AGENTS.md`.
 - New or changed prose follows the `plain-language` skill. Source: the Prose line in `AGENTS.md`.

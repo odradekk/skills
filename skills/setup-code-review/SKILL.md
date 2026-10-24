@@ -42,7 +42,7 @@ Look back over the last 12 months, or the whole history if it is shorter; on a r
 
 - **Commits:** when the range has fewer than 200 commits, read every commit message, body included. Otherwise search the messages in every language the repository's commits use, for words such as fix, revert, bug, and regression, and their equivalents, such as 修复, 修正, and 回滚. Failures also hide in the bodies of feature commits. Read each relevant diff far enough to say what went wrong and where.
 - **Bug-fix decision notes and postmortems** in the range.
-- **Adopted review comments**, when the tracker has merged pull requests: list them (`gh pr list --state merged --search "merged:>=<date>"`) and read their inline comments (`gh api repos/{owner}/{repo}/pulls/<N>/comments`; on GitLab, `glab api projects/:id/merge_requests/<N>/discussions`). Keep a comment only when someone other than the author wrote it, a later commit in the same pull request changed the lines it points at, and it states a rule that applies beyond that one change.
+- **Adopted review comments**, when the platform that hosts `origin` has merged pull requests: list those merged in the range and read their inline review comments through its tool, for example `gh pr list --state merged --search "merged:>=<date>"` and `gh api repos/{owner}/{repo}/pulls/<N>/comments`. Keep a comment only when someone other than the author wrote it, a later commit in the same pull request changed the lines it points at, and it states a rule that applies beyond that one change.
 
 Group the findings by kind of failure. A kind of failure that touched code which still exists becomes a candidate check, with its sources.
 
