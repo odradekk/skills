@@ -1,6 +1,6 @@
 ---
 name: setup-agent-workflow
-description: Create or refresh a repository's Agent workflow section in AGENTS.md, the per-repository settings that the other workflow skills read, including the issue label scheme, and optionally install a pre-commit check that keeps files small enough for agents to read whole. Use when the user asks to set up or update the agent workflow, the issue labels, or a file size limit for a repository, or when another skill finds the section missing or out of date.
+description: Create or refresh a repository's Agent workflow section in AGENTS.md, the per-repository settings that the other workflow skills read, including the issue label scheme, and install git hooks that remove AI attribution from commit messages and keep files small enough for agents to read whole. Use when the user asks to set up or update the agent workflow, the issue labels, AI attribution stripping, or a file size limit for a repository, or when another skill finds the section missing or out of date.
 ---
 
 # Set up the agent workflow
@@ -24,7 +24,7 @@ Maintained with the `setup-agent-workflow` skill. Edit values freely; keep the f
   - `area/api`: `src/api/**`. `area/ui`: `src/ui/**`, `src/styles/**`. `area/docs`: `docs/**`, `README.md`.
 - Prose: documents, decision notes, tickets, pull request descriptions, and commit bodies are revised with the `plain-language` skill. House style: sentence-case headings; straight quotes in English text.
 - File size: files stay under 5,000 tokens (bytes / 4) so an agent can read them whole. `.file-size.json` lists excluded paths, exceptions with their reasons, and the baseline of older files over the limit, which may shrink but not grow. The pre-commit hook and CI run `scripts/check_file_size.py`.
-- Hooks: pre-commit runs `lint-staged` (ESLint and Prettier on staged files) and `scripts/check_file_size.py`; no pre-push hook.
+- Hooks: pre-commit runs `lint-staged` (ESLint and Prettier on staged files) and `scripts/check_file_size.py`; commit-msg removes AI attribution lines and pre-push rejects commits that still credit an AI tool, both through `scripts/strip_attribution.py`. The `prepare` script in `package.json` connects `.githooks/` on `npm install`.
 - CI: GitHub Actions `ci.yml` runs lint, typecheck, the file size check, and the full test suite on Linux and Windows for every pull request.
 
 | Change | Narrowest check |
@@ -64,7 +64,7 @@ Read each value from a file or a command:
 - **Existing decision records:** `docs/adr/`, `docs/decisions/`, `adr/`, `doc/adr/`, `.agents/notes/`, `docs/rfcs/`, or ADR-style files elsewhere.
 - **House style:** the prose rules that a style guide (such as `CONTRIBUTING.md` or a docs style page) or a prose linter configuration (such as `.vale.ini` or `.markdownlint*`) states. Record only stated rules; with none, write `House style: none`.
 - **Notes language:** the language of the repository's existing docs.
-- **File size check:** whether `.file-size.json` and the check script already exist. On a refresh, `python scripts/check_file_size.py --all` shows whether the repository still passes.
+- **Hook checks:** whether the attribution check (`scripts/strip_attribution.py` and its hooks) and the file size check (`.file-size.json` and `scripts/check_file_size.py`) are installed. On a refresh, `python scripts/check_file_size.py --all` shows whether the repository still passes the size limit.
 
 Done when every field has a value backed by a file or command output, or is listed as a question for the user.
 
@@ -82,13 +82,13 @@ Done when every row was run, or is a broad command you confirmed exists.
 
 ### 5. Confirm with the user
 
-Show the drafted section, or on a refresh only the differences from the current one. Ask all open questions in one message: the base branch when detection was ambiguous, the tracker, the label scheme with the plan for each existing label (see [references/labels.md](references/labels.md)), the notes directory (an existing records directory, otherwise `docs/decisions/`), the notes language, when records in another format exist, whether to migrate them now, and, when the file size check is not installed, whether to install it, with the preview described in [references/file-size-check.md](references/file-size-check.md).
+Show the drafted section, or on a refresh only the differences from the current one. Ask all open questions in one message: the base branch when detection was ambiguous, the tracker, the label scheme with the plan for each existing label (see [references/labels.md](references/labels.md)), the notes directory (an existing records directory, otherwise `docs/decisions/`), the notes language, when records in another format exist, whether to migrate them now, and which hook checks to install that are not installed yet: the attribution check, recommended for every repository, and the file size check, with its preview (see [references/hooks.md](references/hooks.md)).
 
 Done when the user has approved the section.
 
 ### 6. Write
 
-Write the section and the `CLAUDE.md` import planned in step 1. Leave the notes directory uncreated: the `decision-notes` skill creates folders when it writes the first note. If the user chose to migrate existing records, follow "Adopt existing records" in the `decision-notes` skill. If the user chose the file size check, install it as [references/file-size-check.md](references/file-size-check.md) describes. With a tracker, apply the approved label plan as [references/labels.md](references/labels.md) describes. Leave the changes uncommitted unless the user asked for a commit.
+Write the section and the `CLAUDE.md` import planned in step 1. Leave the notes directory uncreated: the `decision-notes` skill creates folders when it writes the first note. If the user chose to migrate existing records, follow "Adopt existing records" in the `decision-notes` skill. Install the hook checks the user chose as [references/hooks.md](references/hooks.md) describes. With a tracker, apply the approved label plan as [references/labels.md](references/labels.md) describes. Leave the changes uncommitted unless the user asked for a commit.
 
 ### 7. Report
 
