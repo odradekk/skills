@@ -129,7 +129,7 @@ When a case is borderline, state the outcome you chose and why in your report.
 1. Move the file from `implemented/<class>/` to `archived/<class>/` with `git mv`.
 2. Insert `Archived: YYYY-MM-DD`, using today's date, directly below the status line. The move and this line are the only edits.
 3. Repair links from active files: point them at the current authority, keep them pointing at the archived path only when they cite history on purpose, or delete them.
-4. On the first archive in a repository, add `<notes>/archived/` to the root `.rgignore`, so default searches skip frozen history. Search the archive by naming its directory explicitly.
+4. On the first archive in a repository, write `archived/` to `<notes>/.rgignore`, so searches that pass through the notes directory skip frozen history. Search the archive by naming its directory explicitly.
 
 Once archived, a note is frozen: its content, links, and formatting stay exactly as archived, and it is history, never current authority. The verifier's `--base` check fails on any change to an archived note.
 

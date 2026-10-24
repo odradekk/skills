@@ -49,14 +49,14 @@ class Repo:
         self.git("config", "user.email", "test@example.com")
         self.git("config", "commit.gpgsign", "false")
         self.git("remote", "add", "origin", str(remote))
-        (self.root / "scripts").mkdir()
-        (self.root / "scripts" / "strip_attribution.py").write_bytes(SCRIPT.read_bytes())
-        hooks = self.root / ".githooks"
+        (self.root / ".agents" / "scripts").mkdir(parents=True)
+        (self.root / ".agents" / "scripts" / "strip_attribution.py").write_bytes(SCRIPT.read_bytes())
+        hooks = self.root / ".agents" / "hooks"
         hooks.mkdir()
         for template, hook in (("commit-msg-attribution", "commit-msg"), ("pre-push-attribution", "pre-push")):
             (hooks / hook).write_bytes((SCRIPTS / template).read_bytes())
             (hooks / hook).chmod(0o755)
-        self.git("config", "core.hooksPath", ".githooks")
+        self.git("config", "core.hooksPath", ".agents/hooks")
 
     def git(self, *args, check=True):
         return subprocess.run(["git", "-C", str(self.root), *args], check=check, capture_output=True,
@@ -103,7 +103,7 @@ class StripAttributionTest(unittest.TestCase):
 
     def test_project_identities_come_from_the_config(self):
         repo = Repo(self.tmp)
-        (repo.root / ".attribution.json").write_text(json.dumps({"identities": ["my-agent"]}), encoding="utf-8")
+        (repo.root / ".agents" / "attribution.json").write_text(json.dumps({"identities": ["my-agent"]}), encoding="utf-8")
         cleaned, _ = self.run_on("fix: x\n\nCo-authored-by: My-Agent <bot@example.com>\n", cwd=repo.root)
         self.assertEqual(cleaned, "fix: x\n")
 

@@ -170,7 +170,7 @@ def changed_archived_notes(notes_dir: Path, base: str) -> list[tuple[str, str]]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Check a decision-notes directory.")
-    parser.add_argument("notes_dir", type=Path, help="the decision-notes directory, such as docs/decisions")
+    parser.add_argument("notes_dir", type=Path, help="the decision-notes directory, such as .agents/notes")
     parser.add_argument("--base", help="git ref whose archived notes must still be unchanged, usually the merge base")
     args = parser.parse_args(argv)
     sys.stdout.reconfigure(errors="backslashreplace")

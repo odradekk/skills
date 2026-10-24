@@ -15,7 +15,7 @@ An attribution line is one of:
 Lines that only mention a tool, such as "Add the Claude API client", stay.
 
 The pre-push check also rejects commits whose author or committer is an AI
-tool. Projects add tool names as regular expressions in .attribution.json at
+tool. Projects add tool names as regular expressions in .agents/attribution.json at
 the repository root: {"identities": ["my-agent"]}.
 
 Exit status: 0 clean or cleaned, 1 outgoing commits need fixing, 2 usage or git error.
@@ -35,7 +35,7 @@ IDENTITIES = [
     r"copilot", r"cursor", r"gemini", r"aider", r"windsurf", r"codeium",
     r"cline", r"codebuddy", r"antigravity", r"qwen", r"deepseek", r"devin-ai",
 ]
-CONFIG = ".attribution.json"
+CONFIG = ".agents/attribution.json"
 ZERO = "0" * 40
 TRAILER = re.compile(r"\s*([A-Za-z][\w-]*)\s*:\s*(.*)")
 GENERATED = re.compile(r"\W*(?:generated|created|made|written|built)\s+(?:with|by|using|via)\b", re.IGNORECASE)

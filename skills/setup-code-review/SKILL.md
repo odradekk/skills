@@ -7,7 +7,7 @@ description: Create or refresh a repository's own code review skill, built from 
 
 A project's review skill is worth what the project has learned and written down. This skill gathers that material, settles the priorities with the user, and writes a review skill in which every check names its source: a document, a commit, a decision note, a review comment, or the user's answer. A check without a source is a generic best practice and stays out.
 
-The generated skill is named `<repo>-code-review`, after the repository's directory, such as `rpgx-code-review`, so it never shadows a general `code-review` skill. It lives at `.claude/skills/<repo>-code-review/SKILL.md`, and also under `.agents/skills/` when the repository has that folder, and is committed with the code so it changes with the code.
+The generated skill is named `<repo>-code-review`, after the repository's directory, such as `rpgx-code-review`, so it never shadows a general `code-review` skill. It lives at `.agents/skills/<repo>-code-review/SKILL.md`, which Claude Code reaches through the `.claude/skills` link that `setup-agent-workflow` creates, and is committed with the code so it changes with the code.
 
 ## 1. Read the settings
 

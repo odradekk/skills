@@ -7,6 +7,8 @@ description: Create or refresh a repository's Agent workflow section in AGENTS.m
 
 The workflow skills carry method; the `## Agent workflow` section carries one repository's facts. It caches what an agent cannot look up in one step: which branch is the base, where decision notes live and in which language, which tracker holds tickets, which labels classify issues, the house style for prose, what hooks and CI already run, and which command is the narrowest check for each kind of change. Lookups that take one file or one command, such as the script list in `package.json`, stay in the environment.
 
+Everything the workflow installs lives under `.agents/`, which one set of files shares across agents; Claude Code reaches the project skills through a `.claude/skills` link. [references/layout.md](references/layout.md) shows the layout.
+
 ## The section
 
 Other skills read these field names; keep them exactly. Values below are an example.
@@ -17,14 +19,14 @@ Other skills read these field names; keep them exactly. Values below are an exam
 Maintained with the `setup-agent-workflow` skill. Edit values freely; keep the field names.
 
 - Base branch: `main`
-- Decision notes: `docs/decisions/`, written in English. Every decision record, ADRs included, is a decision note written with the `decision-notes` skill. Files under `docs/decisions/archived/` are frozen history: read them as history and leave them unchanged.
+- Decision notes: `.agents/notes/`, written in English. Every decision record, ADRs included, is a decision note written with the `decision-notes` skill. Files under `.agents/notes/archived/` are frozen history: read them as history and leave them unchanged.
 - Tracker: GitHub issues on `origin`, through `gh`. Tickets for decision notes follow the `note-to-tickets` skill. The pull request that completes a ticket says `Fixes #N` in its description, and its commits carry no ticket reference. Work committed straight to the base branch, without a pull request, says `Refs #N` in its commits and `Fixes #N` in the one that completes the ticket. The change that closes a note's last open ticket also moves the note to `implemented/`.
 - Labels: every issue and pull request gets exactly one `kind/*` label and every `area/*` label that applies. Use only the labels listed here; when none fits, refresh this section with the `setup-agent-workflow` skill.
   - `kind/feature`: a new user- or model-facing capability. `kind/bug-fix`: corrects a defect. `kind/simplification`: removes code, behavior, or surface without adding capability. `kind/architecture`: the structure of the shipped code. `kind/process`: tooling and workflow around the code. `kind/testing`: test infrastructure and strategy.
   - `area/api`: `src/api/**`. `area/ui`: `src/ui/**`, `src/styles/**`. `area/docs`: `docs/**`, `README.md`.
 - Prose: documents, decision notes, tickets, pull request descriptions, and commit bodies are revised with the `plain-language` skill. House style: sentence-case headings; straight quotes in English text.
-- File size: files stay under 5,000 tokens (bytes / 4) so an agent can read them whole. `.file-size.json` lists excluded paths, exceptions with their reasons, and the baseline of older files over the limit, which may shrink but not grow. The pre-commit hook and CI run `scripts/check_file_size.py`.
-- Hooks: pre-commit runs `lint-staged` (ESLint and Prettier on staged files) and `scripts/check_file_size.py`; commit-msg removes AI attribution lines and pre-push rejects commits that still credit an AI tool, both through `scripts/strip_attribution.py`. The `prepare` script in `package.json` connects `.githooks/` on `npm install`.
+- File size: files stay under 5,000 tokens (bytes / 4) so an agent can read them whole. `.agents/file-size.json` lists excluded paths, exceptions with their reasons, and the baseline of older files over the limit, which may shrink but not grow. The pre-commit hook and CI run `.agents/scripts/check_file_size.py`.
+- Hooks: pre-commit runs `lint-staged` (ESLint and Prettier on staged files) and `.agents/scripts/check_file_size.py`; commit-msg removes AI attribution lines and pre-push rejects commits that still credit an AI tool, both through `.agents/scripts/strip_attribution.py`. The `prepare` script in `package.json` connects `.agents/hooks/` on `npm install`.
 - CI: GitHub Actions `ci.yml` runs lint, typecheck, the file size check, and the full test suite on Linux and Windows for every pull request.
 
 | Change | Narrowest check |
@@ -62,9 +64,10 @@ Read each value from a file or a command:
 - **Tracker:** GitHub issues when `origin` is on GitHub and `gh repo view --json hasIssuesEnabled` reports `true`; GitLab issues when `origin` is on GitLab and `glab` is installed; otherwise `none`, which leaves the line as `Tracker: none` without the ticket conventions.
 - **Labels:** with a tracker, its current labels and a draft of the scheme, as [references/labels.md](references/labels.md) describes. Without a tracker, the line reads `Labels: none`.
 - **Existing decision records:** `docs/adr/`, `docs/decisions/`, `adr/`, `doc/adr/`, `.agents/notes/`, `docs/rfcs/`, or ADR-style files elsewhere.
+- **An older layout of this workflow:** decision notes with lifecycle folders in `docs/decisions/`, hooks in `.githooks/`, hook scripts in `scripts/`, hook settings at the root, or project skills in a real `.claude/skills/` directory. [references/layout.md](references/layout.md) lists what moves where.
 - **House style:** the prose rules that a style guide (such as `CONTRIBUTING.md` or a docs style page) or a prose linter configuration (such as `.vale.ini` or `.markdownlint*`) states. Record only stated rules; with none, write `House style: none`.
 - **Notes language:** the language of the repository's existing docs.
-- **Hook checks:** whether the attribution check (`scripts/strip_attribution.py` and its hooks) and the file size check (`.file-size.json` and `scripts/check_file_size.py`) are installed. On a refresh, `python scripts/check_file_size.py --all` shows whether the repository still passes the size limit.
+- **Hook checks:** whether the attribution check (`.agents/scripts/strip_attribution.py` and its hooks) and the file size check (`.agents/file-size.json` and `.agents/scripts/check_file_size.py`) are installed. On a refresh, `python .agents/scripts/check_file_size.py --all` shows whether the repository still passes the size limit.
 
 Done when every field has a value backed by a file or command output, or is listed as a question for the user.
 
@@ -82,13 +85,13 @@ Done when every row was run, or is a broad command you confirmed exists.
 
 ### 5. Confirm with the user
 
-Show the drafted section, or on a refresh only the differences from the current one. Ask all open questions in one message: the base branch when detection was ambiguous, the tracker, the label scheme with the plan for each existing label (see [references/labels.md](references/labels.md)), the notes directory (an existing records directory, otherwise `docs/decisions/`), the notes language, when records in another format exist, whether to migrate them now, and which hook checks to install that are not installed yet: the attribution check, recommended for every repository, and the file size check, with its preview (see [references/hooks.md](references/hooks.md)).
+Show the drafted section, or on a refresh only the differences from the current one. Ask all open questions in one message: the base branch when detection was ambiguous, the tracker, the label scheme with the plan for each existing label (see [references/labels.md](references/labels.md)), the notes directory (an existing records directory, otherwise `.agents/notes/`), the move of an older layout of this workflow to `.agents/` when one exists, the notes language, when records in another format exist, whether to migrate them now, and which hook checks to install that are not installed yet: the attribution check, recommended for every repository, and the file size check, with its preview (see [references/hooks.md](references/hooks.md)).
 
 Done when the user has approved the section.
 
 ### 6. Write
 
-Write the section and the `CLAUDE.md` import planned in step 1. Leave the notes directory uncreated: the `decision-notes` skill creates folders when it writes the first note. If the user chose to migrate existing records, follow "Adopt existing records" in the `decision-notes` skill. Install the hook checks the user chose as [references/hooks.md](references/hooks.md) describes. With a tracker, apply the approved label plan as [references/labels.md](references/labels.md) describes. Leave the changes uncommitted unless the user asked for a commit; then commit them with the `commit` skill.
+Write the section and the `CLAUDE.md` import planned in step 1. Create the `.agents/` layout and the `.claude/skills` link, moving an older layout first, as [references/layout.md](references/layout.md) describes. Leave the notes directory uncreated: the `decision-notes` skill creates folders when it writes the first note. If the user chose to migrate existing records, follow "Adopt existing records" in the `decision-notes` skill. Install the hook checks the user chose as [references/hooks.md](references/hooks.md) describes. With a tracker, apply the approved label plan as [references/labels.md](references/labels.md) describes. Leave the changes uncommitted unless the user asked for a commit; then commit them with the `commit` skill.
 
 ### 7. Report
 

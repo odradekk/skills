@@ -5,7 +5,7 @@ Usage: check_file_size.py [--all | --write-baseline] [--config PATH]
 
 Checks the staged content of every staged file, or with --all every tracked
 file, against a token budget estimated as bytes / 4. Settings live in a JSON
-file at the repository root (default: .file-size.json):
+file at the repository root (default: .agents/file-size.json):
 
     {
       "max_tokens": 5000,
@@ -35,7 +35,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-DEFAULT_CONFIG = ".file-size.json"
+DEFAULT_CONFIG = ".agents/file-size.json"
 
 SPLIT_INSTRUCTIONS = """\
 How to split a file that is over the limit:
@@ -213,7 +213,7 @@ def main(argv: list[str] | None = None) -> int:
         print(message)
     if any(kind == "split" for kind, _ in problems):
         print()
-        print(SPLIT_INSTRUCTIONS.format(config=config_path.name))
+        print(SPLIT_INSTRUCTIONS.format(config=args.config or DEFAULT_CONFIG))
     return 1 if problems else 0
 
 

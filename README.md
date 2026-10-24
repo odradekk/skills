@@ -17,6 +17,10 @@ Development-workflow skills for coding agents, adapted from the agent workflow o
 
 The skills read the section that `setup-agent-workflow` writes and call one another: `grill-decision` and `setup-code-review` run `grill`, `grill-decision` hands its drafts to `decision-notes`, `note-to-tickets` turns proposals into tickets, every step that writes for people revises with `plain-language`, `pre-push-checks` runs the `decision-notes` verifier, and every skill that commits or opens a pull request does it through `commit` and `pr`. Install them together.
 
+## In a repository
+
+The skills keep everything they install in a repository under `.agents/`: decision notes, project skills, git hooks, the hook scripts, and their settings, so one set of files serves every agent. The root holds only `AGENTS.md`, a one-line `CLAUDE.md` that imports it, and a `.claude/skills` link to `.agents/skills` for Claude Code. [layout.md](skills/setup-agent-workflow/references/layout.md) shows the layout, the link on Windows, and how to move an older layout.
+
 ## Always-loaded principles
 
 A skill loads only when something triggers it, but agents write to people on almost every turn. [`skills/plain-language/core.md`](skills/plain-language/core.md) holds the few principles that need to be in context all the time; at deployment, copy them into each agent's global instructions.

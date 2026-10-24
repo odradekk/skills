@@ -28,7 +28,8 @@ class CheckFileSizeTest(unittest.TestCase):
         )
 
     def config(self, settings):
-        (self.root / ".file-size.json").write_text(json.dumps(settings), encoding="utf-8")
+        (self.root / ".agents").mkdir(exist_ok=True)
+        (self.root / ".agents" / "file-size.json").write_text(json.dumps(settings), encoding="utf-8")
 
     def write(self, relative, content, stage=True):
         path = self.root / relative
@@ -94,14 +95,14 @@ class CheckFileSizeTest(unittest.TestCase):
         self.write("src/b.ts", OVER)
         self.commit()
         self.assertEqual(self.run_check("--write-baseline").returncode, 0)
-        baseline = json.loads((self.root / ".file-size.json").read_text(encoding="utf-8"))["baseline"]
+        baseline = json.loads((self.root / ".agents" / "file-size.json").read_text(encoding="utf-8"))["baseline"]
         self.assertEqual(baseline, {"src/a.ts": 5101, "src/b.ts": 5001})
 
         self.write("src/a.ts", OVER)      # shrinks to 5,001
         self.write("src/b.ts", UNDER)     # drops under the limit
         self.write("src/c.ts", OVER)      # new and over the limit
         result = self.run_check("--write-baseline")
-        baseline = json.loads((self.root / ".file-size.json").read_text(encoding="utf-8"))["baseline"]
+        baseline = json.loads((self.root / ".agents" / "file-size.json").read_text(encoding="utf-8"))["baseline"]
         self.assertEqual(baseline, {"src/a.ts": 5001})
         self.assertIn("not added src/c.ts", result.stdout)
 
@@ -109,7 +110,7 @@ class CheckFileSizeTest(unittest.TestCase):
         self.config({"max_tokens": 5000, "exclude": [], "exceptions": {}, "baseline": {"src/a.ts": 5001}})
         self.write("src/a.ts", OVER + "x" * 400)
         self.run_check("--write-baseline")
-        baseline = json.loads((self.root / ".file-size.json").read_text(encoding="utf-8"))["baseline"]
+        baseline = json.loads((self.root / ".agents" / "file-size.json").read_text(encoding="utf-8"))["baseline"]
         self.assertEqual(baseline, {"src/a.ts": 5001})
 
     def test_all_checks_committed_files(self):
@@ -119,13 +120,13 @@ class CheckFileSizeTest(unittest.TestCase):
         self.assert_problem(self.run_check("--all"), "src/big.ts")
 
     def test_pre_commit_hook_blocks_a_commit_over_the_limit(self):
-        hooks = self.root / ".githooks"
-        hooks.mkdir()
+        hooks = self.root / ".agents" / "hooks"
+        hooks.mkdir(parents=True)
         (hooks / "pre-commit").write_bytes(SCRIPT.with_name("pre-commit-file-size").read_bytes())
         (hooks / "pre-commit").chmod(0o755)
-        (self.root / "scripts").mkdir()
-        (self.root / "scripts" / "check_file_size.py").write_bytes(SCRIPT.read_bytes())
-        self.git("config", "core.hooksPath", ".githooks")
+        (self.root / ".agents" / "scripts").mkdir()
+        (self.root / ".agents" / "scripts" / "check_file_size.py").write_bytes(SCRIPT.read_bytes())
+        self.git("config", "core.hooksPath", ".agents/hooks")
         self.commit()
 
         self.write("src/big.ts", OVER)
