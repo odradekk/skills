@@ -17,7 +17,7 @@ Other skills read these field names; keep them exactly. Values below are an exam
 Maintained with the `setup-agent-workflow` skill. Edit values freely; keep the field names.
 
 - Base branch: `main`
-- Decision notes: `docs/decisions/`, written in English. Files under `docs/decisions/archived/` are frozen history: read them as history and leave them unchanged.
+- Decision notes: `docs/decisions/`, written in English. Every decision record, ADRs included, is a decision note written with the `decision-notes` skill. Files under `docs/decisions/archived/` are frozen history: read them as history and leave them unchanged.
 - Hooks: pre-commit runs `lint-staged` (ESLint and Prettier on staged files); no pre-push hook.
 - CI: GitHub Actions `ci.yml` runs lint, typecheck, and the full test suite on Linux and Windows for every pull request.
 

@@ -75,15 +75,16 @@ A section may be one sentence; its length follows the decision. Headings stay in
 
 ## Write a new note
 
-1. **Check supersession.** Search the active notes (everything outside `archived/`) for notes that cover the same decision, mechanism, or rejected alternative. Give every match an outcome in this same change:
+1. **Settle the decision.** When neither the conversation nor the work itself shows which alternatives were weighed and why the chosen one won, settle the decision with the user through the `grill-decision` skill first; it returns here with material for every section.
+2. **Check supersession.** Search the active notes (everything outside `archived/`) for notes that cover the same decision, mechanism, or rejected alternative. Give every match an outcome in this same change:
    - A fully superseded implemented note: archive it, or fold it into the new note (see [Retire notes](#retire-notes)).
    - A partially superseded note: keep it, cross-link both notes, and update the facts the new decision changes.
    - An obsolete proposal: reject it.
    - A rejected note that no longer guards against a plausible mistake: delete it.
 
    Done when every match has an outcome.
-2. **Write** the note in its lifecycle and class folder, in the format above.
-3. **Verify** (see [Verify](#verify)).
+3. **Write** the note in its lifecycle and class folder, in the format above.
+4. **Verify** (see [Verify](#verify)).
 
 ## Implement a proposal
 
