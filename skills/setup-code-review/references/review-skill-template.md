@@ -12,14 +12,25 @@ description: Review a change to <repo> against this repository's rules and the f
 
 Built with the `setup-code-review` skill, which refreshes it. Edit it freely, and keep a source on every check.
 
+## Who reviews
+
+When your tools can start a sub-agent, the review runs in a fresh one, on the most capable model available, and you coordinate. An agent that wrote the change, or watched it being written, shares the assumptions behind it and misses what they hide.
+
+1. Find the change. For a pull request, compare its head with the merge base of its base branch. For a branch, compare it with its merge base with `<base branch>`. For commits made straight to `<base branch>`, take the commits the user names, or the commits not yet on `origin/<base branch>`, together with any uncommitted changes.
+2. Start the reviewer with only: the change, as a base and head or a list of commits and uncommitted paths; this skill's path; the IDs of the tickets and decision notes the change serves; and the pull request description, when there is one, as claims to check. The conversation and reasoning that produced the change stay out. For a change across several areas, start one reviewer per group of areas, and one more that checks only the change against its tickets' acceptance criteria.
+3. Pass the findings on as reported. Check factual claims, such as whether a line exists; where you disagree with a judgment, add your reasons beside the finding instead of removing it.
+
+Without sub-agents, review the change yourself and say in the report that the review ran in the author's context.
+
 ## Process
 
-1. Find the change. For a pull request, compare its head with the merge base of its base branch. For a branch, compare it with its merge base with `<base branch>`. For commits made straight to `<base branch>`, review the commits the user names, or the commits not yet on `origin/<base branch>`, together with any uncommitted changes. List the changed paths.
-2. For each changed path, read the documents that Sources of truth lists for it, before reading the diff.
-3. Read the diff, and enough of the surrounding code to understand the design.
-4. Run the checks listed under Run by the reviewer for the changed paths.
-5. Apply the blocking requirements, then the suggestions for the changed paths, then the workflow checks.
-6. Report.
+The reviewer:
+
+1. Lists the changed paths, and for each one reads the documents that Sources of truth lists for it, before reading the diff.
+2. Reads the diff, and enough of the surrounding code to understand the design.
+3. Runs the checks listed under Run by the reviewer for the changed paths.
+4. Applies the blocking requirements, then the suggestions for the changed paths, then the workflow checks.
+5. Reports.
 
 ## Sources of truth
 
