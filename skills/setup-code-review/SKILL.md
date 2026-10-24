@@ -74,7 +74,7 @@ Fill in [references/review-skill-template.md](references/review-skill-template.m
 - **Checked automatically** and **Run by the reviewer:** the two lists from step 3.
 - The last line records the current commit.
 
-Write the skill in the language the `Decision notes` line names, translating the template's headings and text; keep the front matter keys, commands, paths, and code as they are. Keep it to a table of sources and a short list of checks, so it routes the reviewer to the project's documents instead of repeating them. Revise it with the `plain-language` skill, then show it, or on a refresh show the changes, and write it only after the user approves. Leave the changes uncommitted unless the user asked for a commit.
+Write the skill in the language the `Decision notes` line names, translating the template's headings and text; keep the front matter keys, commands, paths, and code as they are. Keep it to a table of sources and a short list of checks, so it routes the reviewer to the project's documents instead of repeating them. Revise it with the `plain-language` skill, then show it, or on a refresh show the changes, and write it only after the user approves. Leave the changes uncommitted unless the user asked for a commit; then commit them with the `commit` skill.
 
 ## 7. Report
 

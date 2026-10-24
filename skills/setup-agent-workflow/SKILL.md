@@ -88,7 +88,7 @@ Done when the user has approved the section.
 
 ### 6. Write
 
-Write the section and the `CLAUDE.md` import planned in step 1. Leave the notes directory uncreated: the `decision-notes` skill creates folders when it writes the first note. If the user chose to migrate existing records, follow "Adopt existing records" in the `decision-notes` skill. Install the hook checks the user chose as [references/hooks.md](references/hooks.md) describes. With a tracker, apply the approved label plan as [references/labels.md](references/labels.md) describes. Leave the changes uncommitted unless the user asked for a commit.
+Write the section and the `CLAUDE.md` import planned in step 1. Leave the notes directory uncreated: the `decision-notes` skill creates folders when it writes the first note. If the user chose to migrate existing records, follow "Adopt existing records" in the `decision-notes` skill. Install the hook checks the user chose as [references/hooks.md](references/hooks.md) describes. With a tracker, apply the approved label plan as [references/labels.md](references/labels.md) describes. Leave the changes uncommitted unless the user asked for a commit; then commit them with the `commit` skill.
 
 ### 7. Report
 

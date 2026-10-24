@@ -25,7 +25,7 @@ git merge-base HEAD origin/<base>
 git diff --name-status <merge-base> HEAD
 ```
 
-Checks run on the working tree, but a push carries only commits. When `git status` shows uncommitted changes, ask whether they belong in this push; until the working tree matches what will be pushed, a passing check proves nothing about the push.
+Checks run on the working tree, but a push carries only commits. Until the working tree matches what will be pushed, a passing check proves nothing about the push. When `git status` shows uncommitted changes, commit the ones that belong to this work with the `commit` skill, and ask the user about the rest.
 
 Done when you have the complete list of paths the push will carry, with their change status.
 
@@ -47,7 +47,7 @@ Run each selected check once. After a filtered run, read the reported test or fi
 
 When a check fails:
 
-- **Caused by this change:** fix it and rerun that check.
+- **Caused by this change:** fix it, commit the fix with the `commit` skill, and rerun that check.
 - **Possibly pre-existing:** run the same check at the merge base in a temporary worktree (`git worktree add <dir> <merge-base>`, then `git worktree remove <dir>`). A failure there is pre-existing: report it rather than working around it.
 
 Hooks run as configured; a hook failure is a check failure. If a command from the table no longer exists or its syntax changed, finish with a working command and tell the user that the section needs a refresh through `setup-agent-workflow`.
@@ -56,7 +56,7 @@ Done when every selected check passed, or each failure is shown to be pre-existi
 
 ## 5. Push
 
-Push only when the user asked for a push. When the user asked to rewrite a branch's history, push with `git push --force-with-lease`. After a rebase onto, or a merge of, a newer base, repeat steps 2 to 4 for what the new base changed, and rerun only the checks it invalidates.
+When the work goes into a pull request, the `pr` skill pushes it, after running steps 1 to 4 of this skill. Otherwise push only when the user asked for a push. When the user asked to rewrite a branch's history, push with `git push --force-with-lease`. After a rebase onto, or a merge of, a newer base, repeat steps 2 to 4 for what the new base changed, and rerun only the checks it invalidates.
 
 ## 6. Report
 
