@@ -49,11 +49,14 @@ Start with the largest question: for each meaningful part of the change, would a
 
 - **Indirection that buys nothing:** wrappers that only forward calls, or generic mechanisms that hide a simple data structure. Delete the layer.
 - **Unclear contracts:** casts, `any` or `unknown`, needless optional parameters, loosely shaped objects, or silent fallbacks over an invariant nobody stated. Make the boundary explicit with a type, or with validation where data enters.
+- **Wide mutable state:** state kept in a wider scope than the code that reads and changes it, such as module or global state for data one function needs, or a field for what could be a local, and a value kept in step with another instead of derived from it. Narrow the scope, in the order of a function that returns its result, a local, a field, module state, and a global, or derive the value.
 
 **Size and flow**
 
 - **Size:** a file the change pushes past the file size limit, or a function that does several jobs. Split it by responsibility.
 - **Flow:** independent steps run one after another for no reason, or related updates that can leave state half-applied. Let independent steps run independently, and make related updates atomic.
+
+Every lens ends with the reader's test: for the values the change introduces or changes, can a reader new to the code say where each comes from and what can change it within half a minute? When the answer means tracing through several layers or holding hidden state in mind, the finding names the layers to cut or the state to narrow.
 
 Every finding carries its evidence:
 

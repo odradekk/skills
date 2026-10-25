@@ -85,12 +85,15 @@ Assume the next contributor is an agent that sees only the files it opened, copi
 - **Leaked detail:** a representation, policy, or protocol detail appears in more than one module, or a wire, storage, or framework type appears on the interface.
 - **Split by execution order:** modules for load, validate, transform, and save that each repeat the same representation, instead of one module that owns it.
 - **Split ownership:** two modules write the same state, or keep their own copies of it.
+- **Wide mutable state:** state kept in a wider scope than the code that reads and changes it, such as module state for data one function needs or a field for what could be a local, or state that several places change. Prefer, in this order, a function that returns its result, a local, a field, module state, and a global, and derive a value instead of keeping a copy of it in step.
 - **Two ways to do one task:** the next contributor copies whichever it finds first, and both keep gaining callers.
 - **Reachable internals:** callers can import what the module keeps inside; make it unreachable from outside the module.
 - **Hand-synced lists:** the same items are listed in several places. Derive the others from one, or make the build fail when they disagree.
 - **Untestable through the interface:** a behavior the tests could check only by reaching inside. The seam is in the wrong place.
 
-Done when every flaw on the list is absent or revised, or kept with a stated reason.
+Then apply the reader's test to each value the interface returns and each piece of state it keeps: a reader new to the code can say where the value comes from and what can change it within half a minute. When the answer means tracing through several layers or holding hidden state in mind, cut layers or narrow the state.
+
+Done when every flaw on the list is absent or revised, or kept with a stated reason, and every value passes the reader's test.
 
 ## 6. Write the contract
 
