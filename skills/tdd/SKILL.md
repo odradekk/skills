@@ -9,9 +9,11 @@ The red-green loop is the easy part. The quality of test-driven work is decided 
 
 Cleanup after green, such as removing duplication or extras, belongs to the `simplify-change` skill, which runs these tests as its proof. A bug fix starts from the `diagnose-bug` skill instead.
 
+The skill runs without stopping for anyone, so that it can be one step of a longer workflow: what it cannot do or decide itself goes into its report.
+
 ## 1. Start from the contract
 
-Read the repository's `## Agent workflow` section: Decision notes, and the check table with its test commands. If the section is missing, run the `setup-agent-workflow` skill first.
+Read the repository's `## Agent workflow` section: Decision notes, and the check table with its test commands. If the section is missing, find the test commands in the manifests for this run only, and say so in the report.
 
 - **The contract:** the one the `design-interface` skill wrote, when the work adds or changes an interface. Otherwise the existing interface: its types, its documentation, and its tests, together with the intent, such as the ticket, the acceptance criteria of a decision note, or the request. When the work needs an interface that does not exist yet or must change, run `design-interface` first.
 - **The existing tests** at the seams the work touches: where they live, how they are named, which fixtures and data builders they use, and which behavior they already cover. Follow the conventions of a test that meets the rules in step 3, not merely of the nearest one.
@@ -41,7 +43,7 @@ Leave out:
 - incidental details, such as log text, the calls made to collaborators, and internal state, unless the contract names them;
 - a case that another test already covers at the same seam.
 
-Order the list so that each case builds on the one before: the simplest typical case first, then the other variants, then the boundaries and errors. Show the list to the user, and continue unless the user answers first.
+Order the list so that each case builds on the one before: the simplest typical case first, then the other variants, then the boundaries and errors.
 
 Done when every contract item has at least one case, and every case names its contract item, its seam, and its kind when it is not automated.
 
@@ -65,20 +67,20 @@ For each automated case on the list, in order:
 3. Write the least code behind the interface that makes it pass. Code for a case that is not on the list waits until the case is added to the list.
 4. Run it together with the tests before it; all of them pass.
 
-For a manual check, look at the behavior before the change, where the old behavior plays the part of the failure, and again after it. For a structural check, run the search before the change, when it finds what is to go, and after, when it finds nothing. A check of shipped content passes at once, since the content starts out right; step 5 proves it by injecting a violation into the content.
+For a manual check, look at the behavior before the change, where the old behavior plays the part of the failure, and again after it. A manual check you cannot make yourself, such as one that needs a device or a browser you do not have, is listed as not checked, with what to look at, and the loop goes on. For a structural check, run the search before the change, when it finds what is to go, and after, when it finds nothing. A check of shipped content passes at once, since the content starts out right; step 5 proves it by injecting a violation into the content.
 
 Once a test has failed because the behavior was missing, the code changes to meet it, never the other way round. Change an expected value only when working the case out by hand again gives the new value, and record why. Weaken no assertion, and skip or delete no test, to reach green.
 
 When the implementation keeps meeting the same kind of friction, stop and return to the `design-interface` skill, as its last step describes.
 
-Done when every automated case has passed after failing because the behavior was missing, and every manual and structural check has been made before and after.
+Done when every automated case has passed after failing because the behavior was missing, and every manual and structural check has been made before and after, or listed as not checked.
 
 ## 5. Check the tests
 
 Passing tests do not yet show that they would catch a wrong implementation. Make these checks:
 
 1. **Trace both ways.** Every contract item has a case, and every test belongs to a case on the list. A test without a contract item is removed, or the contract item it reveals is added to the list, with the reason.
-2. **Cover the change.** When the check table or the test runner provides coverage, run the tests with it: every changed production line and branch is run by a test. A line that no test runs is code nothing asked for, which you remove; a missing case, which you add; or an exception, such as code that connects to the UI and is checked by hand, which the report names with its reason. Without a coverage tool, say so in the report, and offer to add one: a coverage command in the check table is a `testing` decision, and a new dependency needs the user's approval.
+2. **Cover the change.** When the check table or the test runner provides coverage, run the tests with it: every changed production line and branch is run by a test. A line that no test runs is code nothing asked for, which you remove; a missing case, which you add; or an exception, such as code that connects to the UI and is checked by hand, which the report names with its reason. Without a coverage tool, say so in the report, and propose adding one as a coverage command in the check table. Install nothing: a new dependency is a `testing` decision for the user.
 3. **Inject errors.** For each boundary and each number the rule fixes in the changed code, make it wrong for a moment: move a comparison by one, such as `>=` to `>`; change the constant; invert the condition; delete the branch. Run the tests: at least one must fail. An injected error that no test catches is a missing case, which you add, or code that nothing needs, which you remove. When the project has a mutation testing tool, such as Stryker, mutmut, or cargo-mutants, run it on the changed files instead, and treat each surviving mutant the same way.
    - Tunable data is the exception: the tests read it as input, so changing a value keeps them passing, and the report says so. The data's invariants are proven instead by injecting a violation into the data, such as swapping two rows, and watching the content check fail.
    - Make each injection with an edit that keeps the file's line endings, and check that it applied: an edit that matched nothing proves nothing. Save the diff of the working tree before the first injection, and compare it with the diff after the last, so that no injected error remains even when the tree had other changes.
@@ -90,7 +92,7 @@ Done when every check passes, or each gap is in the report with its reason.
 Report:
 
 - the test list, with each case's contract item, seam, kind, and test;
-- for each automated case, the failure it produced before its code existed, and for each manual or structural check, what it showed before and after;
+- for each automated case, the failure it produced before its code existed, and for each manual or structural check, what it showed before and after, or what to look at when it was not checked;
 - each expected value that changed, and why;
 - the coverage of the change and its exceptions, or that the project has no coverage tool;
 - each injected error and the test that caught it, each one no test caught, with what was done, and the tunable data the tests read as input;

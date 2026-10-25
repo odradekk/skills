@@ -11,7 +11,7 @@ It works inside the change. Restructurings that reach beyond it belong to the `d
 
 ## 1. Set the scope
 
-Read the repository's `## Agent workflow` section: base branch, Decision notes, Labels, and the check table. If the section is missing, run the `setup-agent-workflow` skill first. If the user declines, find the checks in the manifests for this run only, and say so in the report.
+Read the repository's `## Agent workflow` section: base branch, Decision notes, Labels, and the check table. If the section is missing, find the checks in the manifests for this run only, and say so in the report.
 
 - **The change:** the current branch against its merge base with the base branch, plus uncommitted changes; or the commits or files that the user or the calling skill names. A named scope limits every edit, even when the change is larger.
 - **The intent:** the ticket, decision note, or request that the change carries out, and the design documents they cite. It decides what the change must provide: something the change adds that the intent does not call for and nothing uses is a candidate.

@@ -11,6 +11,8 @@ Two words keep their meaning throughout. A **seam** is where a module's interfac
 
 A change that uses an existing interface as it is skips this skill: the existing interface, its documentation, and its tests are the contract.
 
+The skill runs without stopping for anyone, so that it can be one step of a longer workflow. It decides what the intent leaves open by the rules in step 6, and records every choice in its report, where the caller and the review that follows can see it.
+
 ## 1. Ground the design
 
 - Read the intent, such as the ticket, the decision note, or the request, and the decision notes and design documents that touch the area. Implemented notes and the parts of designs that describe the code as it is are constraints; a proposed note may already sketch the interface.
@@ -70,7 +72,7 @@ For each operation, write:
 - the **effect statement,** when it changes state: what changes, in terms of the inputs and the state before the call;
 - the errors it promises, and the order of calls it requires, if any.
 
-These products are text until step 7: they go into the contract shown in step 6.
+These products are text until step 7: they go into the contract in step 6.
 
 Done when every kind of data has its definition and every operation has its products.
 
@@ -90,7 +92,7 @@ Assume the next contributor is an agent that sees only the files it opened, copi
 
 Done when every flaw on the list is absent or revised, or kept with a stated reason.
 
-## 6. Write the contract and confirm it
+## 6. Write the contract
 
 The contract is what the `tdd` skill turns into tests. List, for each operation:
 
@@ -102,19 +104,29 @@ The contract is what the `tdd` skill turns into tests. List, for each operation:
 - the tunable data it reads, such as thresholds in a content or configuration file: the rule it applies to that data, and the invariants the data must keep, not the current values;
 - what it excludes: the inputs that the types or the system boundary rule out.
 
-Show the user the call sites, the data definitions and operations, the shapes that lost and why, and the contract. For a new public interface, or one that crosses modules, wait for the user's confirmation before writing any code, since these products are the cheapest to correct now and everything after builds on them. Otherwise, continue unless the user answers first.
+When the intent leaves a choice open, such as the wording of a message or what happens at a limit it does not mention, decide it without asking. Prefer, in this order, the existing behavior, the smaller interface, and the way the project already does the same thing, and record the choice as an assumption.
 
-When the design settles a lasting structural decision that no existing note or document records, such as a module boundary, the owner of a piece of state, or a port with its adapters, offer to record it as an `architecture` note with the `decision-notes` skill, with the shapes that lost as its alternatives; write it only when the user agrees.
+When the design cannot go on, because the intent contradicts itself or an implemented decision, or because it lacks information that no default supplies, write no code. End with the report of step 8, saying what blocks the design, for the caller to resolve.
 
-Done when the contract covers every operation, and the user has confirmed it where confirmation is required.
+Done when the contract covers every operation, and every open choice is decided and recorded.
 
 ## 7. Write the design into the code
 
 Write the data definitions as types, the purpose, effect, errors, and order into the documentation comment of each operation, and a stub for each operation: the real name and parameters, with a body that fails as not implemented and uses its parameters, such as in the error message, so the compiler's unused checks pass. Update the existing callers so the code compiles; until the `tdd` skill fills in the stubs, they fail at run time.
 
-Done when the code compiles or loads with the stubs in place.
+When the design settles a lasting structural decision that no existing note or document records, such as a module boundary, the owner of a piece of state, or a port with its adapters, and the decision meets the conditions the `decision-notes` skill sets for an implemented note, record it with that skill in the same change as an `architecture` note, with the shapes that lost as its alternatives. It goes to review with the code.
 
-## 8. Keep the design honest
+Done when the code compiles or loads with the stubs in place, and the note is written where one is due.
+
+## 8. Report
+
+Report the call sites, the data definitions and operations, the shapes that lost and why, the flaws kept and why, the contract, the assumptions, the follow-ups, such as a missing boundary check, and the note written, if any; or, when the design could not go on, what blocks it.
+
+When another skill called this one, return the report to it. Otherwise write it in the conversation's language, by the principles of the `plain-language` skill.
+
+Done when the report covers every product of steps 3 to 7.
+
+## 9. Keep the design honest
 
 The implementation fills in the stubs against the contract. A deviation, such as a parameter the design did not foresee, is a signal, not friction to absorb silently: decide whether the design was wrong, a requirement was missed, or the implementation is doing too much, and say which.
 
