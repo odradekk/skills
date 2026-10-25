@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Deep code review
 
-This review is about structure, not correctness. It looks for restructurings that keep behavior and make branches, modes, flags, helpers, or layers unnecessary, and for changes that leave the code harder to hold in one's head. The project's own review skill (`<repo>-code-review`) checks a change against the project's rules and past failures; run both when both matter.
+This review is about structure, not correctness. It looks for restructurings that keep behavior and make branches, modes, flags, helpers, or layers unnecessary, and for changes that leave the code harder to hold in one's head. The project's own review skill (`<repo>-code-review`) checks a change against the project's rules and past failures; run both when both matter. Two other skills remove code instead of judging it: `simplify-change` removes from a change what it adds without need, before its review, and `find-simplifications` surveys code for what the project could stop maintaining, including capabilities worth giving up. This review judges the structure of what remains.
 
 It only reviews: it reports findings and changes no code.
 
