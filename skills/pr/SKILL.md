@@ -26,9 +26,8 @@ Done when you know the branch, its commits, the platform, and whether a pull req
 
 ## 2. Check and push
 
-1. **Decision notes:** when the pull request completes the last open ticket of a decision note, the branch must move the note to `implemented/`. If it does not, do that with the `decision-notes` skill and commit it with the `commit` skill.
-2. **Checks:** run steps 1 to 4 of the `pre-push-checks` skill. Fix a failure the branch caused, commit the fix with the `commit` skill, and rerun the check. Record a failure that already exists on the base for the Testing section.
-3. **Push:** `git push -u origin <branch>` when the branch has no upstream, `git push` otherwise.
+1. **Checks:** run steps 1 to 4 of the `pre-push-checks` skill. Fix a failure the branch caused, commit the fix with the `commit` skill, and rerun the check. Record a failure that already exists on the base for the Testing section.
+2. **Push:** `git push -u origin <branch>` when the branch has no upstream, `git push` otherwise.
    - When the pre-push hook rejects commits that credit an AI tool, run the rebase command it prints, which rewrites only unpushed commits, and push again.
    - When the push is rejected as not a fast-forward, stop and report. Force-push only when the user asked to rewrite this branch's history, and then with `git push --force-with-lease`.
 

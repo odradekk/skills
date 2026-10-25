@@ -21,7 +21,7 @@ Done when the command runs in seconds and still meets every condition of red in 
 
 ## 2. Hypothesize
 
-Read the decision notes that touch the code in question. An implemented note may explain why the code works the way it does, and a fix that goes against one must say so.
+Read the decision notes that touch the code in question. An accepted note may explain why the code works the way it does, and a fix that goes against one must say so.
 
 When the bug appeared between two known states, such as two commits, two dependency versions, or two data sets, bisect with the red command first, for example with `git bisect run`. The first bad state narrows every hypothesis.
 
@@ -39,7 +39,7 @@ Done when one hypothesis's prediction held and the others' failed. When every pr
 
 ## 4. Fix with a regression test
 
-The regression test needs a correct seam: a place where the test exercises the bug the way it happens at the real call site. A seam that is too shallow, such as a unit test of one caller when the bug needs two, gives false confidence. When no correct seam exists, that is a finding in itself: report it, and offer to record it as a proposed `testing` or `architecture` note with the `decision-notes` skill.
+The regression test needs a correct seam: a place where the test exercises the bug the way it happens at the real call site. A seam that is too shallow, such as a unit test of one caller when the bug needs two, gives false confidence. When no correct seam exists, that is a finding in itself: report it as an open decision for planning, a candidate for a `testing` or `architecture` proposal.
 
 With a correct seam:
 
@@ -49,7 +49,7 @@ With a correct seam:
 4. Watch it pass.
 5. Run the original red command and watch it pass too.
 
-When the fix changes something that an implemented decision note describes, update the note in the same change.
+When the fix goes against an accepted decision note, say so in the report: the note stays as it is, and whether to change the decision is for planning to take up.
 
 ## 5. Clean up
 

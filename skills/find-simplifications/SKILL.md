@@ -16,9 +16,9 @@ The scope is the area the user names, or the whole repository. Read the reposito
 
 The decision notes are the project's memory of what it keeps on purpose and what it already tried. Read the active notes that touch the scope:
 
-- **Implemented notes,** especially of class `architecture`, are constraints. A candidate that goes against one says so and why, since removing it is a new decision that supersedes the note.
+- **Accepted notes,** especially of class `architecture`, are constraints. A candidate that goes against one says so and why, since removing it is a new decision that supersedes the note.
 - **Rejected notes,** especially `rejected/simplification/`, are proposals already declined. A candidate that repeats one answers the reason it was rejected with new evidence. A rejection settles only what it rejected: the rejected half of a mixed proposal does not settle an independent candidate.
-- **Implemented `simplification` notes** show what this project has counted as worth removing.
+- **Accepted `simplification` notes** show what this project has counted as worth removing.
 - **Proposed notes** are planned work. A candidate that overlaps one points to it.
 
 Read also the rules and designs that govern the scope: the `AGENTS.md` files, the policies they link, such as for dependencies or tests, and the architecture and design documents that the README, the `AGENTS.md` files, or the notes point to. The parts of a design that describe the code as it is are constraints; the parts that describe plans are planned work, like proposed notes. Archived notes are history: read them for calibration, never as constraints.
@@ -100,10 +100,10 @@ Each candidate gets one destination:
 
 - **Change directly:** an unreachable or duplicate candidate whose change is small, such as one module and its tests.
 - **Ask:** a small narrowing, as a question for the user, such as whether anyone still has data in an old format.
-- **Propose:** a larger removal or duplicate, or a narrowing that is large or contested. Offer to record it as a proposed `simplification` note with the `decision-notes` skill, with the consumer evidence, what the project stops maintaining, the capability given up, and acceptance criteria that can be observed. When a note already owns the same decision, update that note instead. A proposal that needs more than one pull request goes on to the `note-to-tickets` skill.
-- **Record why it stays:** a Keep candidate whose reason others would miss. Offer to record it as a rejected `simplification` note, so the next survey reads the reason instead of proposing it again.
+- **Propose:** a larger removal or duplicate, or a narrowing that is large or contested. Offer to record it as a proposed `simplification` note with the `decision-notes` skill, with the consumer evidence, what the project stops maintaining, the capability given up, and acceptance criteria that can be observed. When a proposal already owns the same decision, revise it instead; when an accepted note owns it, the new proposal supersedes that note. A proposal that needs more than one pull request goes on to the `note-to-tickets` skill.
+- **Record why it stays:** a Keep candidate whose reason others would miss. Offer to record it as a rejected `simplification` note, written as a proposal and rejected through the `decision-notes` skill, so the next survey reads the reason instead of proposing it again.
 
-Write notes only when the user agrees. When the user asks to implement a candidate, make each direct change in its own commit through the `commit` skill after the narrowest checks of the check table pass, and carry out a proposal by the "Implement a proposal" procedure of the `decision-notes` skill.
+Write notes only when the user agrees. When the user asks to implement a candidate, make each direct change in its own commit through the `commit` skill after the narrowest checks of the check table pass. A proposal is carried out by the `implement` skill once the user accepts it.
 
 Write the report in the conversation's language and the notes in the language the `Decision notes` line names, both by the principles of the `plain-language` skill.
 

@@ -11,8 +11,9 @@ A decision note and a grill record have the same parts. The note's Proposal or D
 
 Read the `Decision notes` line of the repository's `## Agent workflow` section; if the section is missing, run the `setup-agent-workflow` skill first. Search the active notes (everything outside `archived/`) and the relevant code for the topic, and sort the notes you find:
 
-- **An active note that already owns this decision:** the session updates that note instead of starting a new one.
-- **Implemented notes:** settled constraints.
+- **A proposal that already owns this decision:** the session revises it instead of starting a new one.
+- **An accepted note that owns it:** frozen; a change to the decision becomes a new proposal that supersedes it.
+- **Accepted notes:** settled constraints.
 - **Rejected notes:** options already turned down, with their reasons.
 - **Proposed notes on the same topic:** candidates to update, merge, or reject.
 
@@ -23,7 +24,7 @@ Done when you can name every active note that touches the topic, or have confirm
 Run the `grill` skill with:
 
 - **Topic:** the decision.
-- **Settled ground:** the constraints from implemented notes, and the options rejected notes turned down, with their reasons.
+- **Settled ground:** the constraints from accepted notes, and the options rejected notes turned down, with their reasons.
 - **Required answers:** for work not yet built, what observable state means done and what the change knowingly gives up; for work that already shipped, what it cost.
 - **Reader:** whoever reads the repository's decision notes.
 
@@ -36,12 +37,12 @@ Map the record onto the sections of the `decision-notes` format:
 | From the record | Into |
 |---|---|
 | Topic as confirmed | Problem |
-| Settled decisions on the chosen path | Proposal; Decision for work that already shipped |
+| Settled decisions on the chosen path | Proposal |
 | Settled technical sub-decisions, such as a data format or an interface | Free-form sections between the required ones |
 | Rejected options with their reasons | Alternatives considered |
-| Costs the user accepted, and the risks raised | Risks; Consequences for work that already shipped |
+| Costs the user accepted, and the risks raised | Risks |
 | The answer to what counts as done | Acceptance criteria |
-| Deferred questions | Open questions in the Proposal; a `## Deferred` section for work that already shipped |
+| Deferred questions | Open questions in the Proposal |
 
 A record that settled several independent decisions, each with its own trade-off, produces one note per decision; a sub-decision that depends on one choice stays in that choice's note. Write each note as current-state prose about the decision and its reasons. Round numbers, attributions such as "the user said", and the course of the interview stay out of the note.
 
@@ -49,6 +50,6 @@ Revise the drafts with the `plain-language` skill, then show them, with the life
 
 ## 4. Record them
 
-Write the confirmed notes by following the `decision-notes` skill, starting with its supersession check; the notes found in step 1 are its first candidates.
+Write the confirmed notes as proposals by following the `decision-notes` skill, starting with its check of the notes a proposal touches; the notes found in step 1 are its first candidates. They stay proposals until the user accepts them, through the `decision-notes` skill.
 
 Done when the `decision-notes` verifier passes and the user has confirmed every note's content.

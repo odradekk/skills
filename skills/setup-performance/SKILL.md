@@ -85,13 +85,13 @@ Done when the user has confirmed the grill record.
 
 ## 5. Record the decision and plan the build
 
-Write the note with the `decision-notes` skill in `proposed/testing/`, from the grill record: the operations and why, the workloads, metrics and targets, the CI or reference-machine decision, what the measurements exclude, how budgets are calibrated, and the alternatives. The details of the layout are left to the measurement rules from step 6. On a refresh, update the existing note instead.
+Write the note with the `decision-notes` skill in `proposed/testing/`, from the grill record: the operations and why, the workloads, metrics and targets, the CI or reference-machine decision, what the measurements exclude, how budgets are calibrated, and the alternatives. The details of the layout are left to the measurement rules from step 6. On a refresh, the existing note is accepted and frozen: a change to its decision is a new proposal that supersedes it. Show the note: step 6 builds only an accepted decision, so the build starts once the user accepts the note through the `decision-notes` skill.
 
 This run builds the shared parts, the rules, and the scenario for the operation the grill record puts first. The shared parts are the run command, the reporting function, and any support code that two or more planned scenarios need, such as the driver for a browser. Each further scenario is built in this run too when it needs nothing beyond its own scenario directory and the shared parts; the row, target, baseline, and check that every scenario adds elsewhere do not count. A scenario that needs more, such as a new tool or dependency, or a change to product code, becomes a ticket.
 
 Draft those tickets with the `note-to-tickets` skill and get them approved, but publish them only after step 6, once the setup change is committed, so they point at rules and code that others can read. The note's acceptance criteria that this run meets need no ticket, and the tickets cite the measurement `AGENTS.md` for the layout.
 
-Done when the note is written, and every guarded operation is either planned for this run or has an approved ticket draft.
+Done when the user has accepted the note, and every guarded operation is either planned for this run or has an approved ticket draft.
 
 ## 6. Build the infrastructure
 
@@ -109,7 +109,7 @@ Done when the note is written, and every guarded operation is either planned for
    - for changes under the measurement directory: the type check, the tests of the support code, and one sample of each affected scenario;
    - for changes to the code paths and the content that a scenario guards: one sample of that scenario, compared with its baseline and reported, not enforced.
 
-When no ticket remains, finish the note with the "Implement a proposal" procedure of the `decision-notes` skill; otherwise the change that completes the last ticket does it. Leave the changes uncommitted unless the user asked for a commit. Then commit them with the `commit` skill, apart from any optimization, and publish the ticket drafts from step 5.
+Leave the changes uncommitted unless the user asked for a commit. Then commit them with the `commit` skill, apart from any optimization, and publish the ticket drafts from step 5.
 
 Done when every scenario built in this run runs through the run command, has passed its proofs, and has a recorded baseline and noise.
 

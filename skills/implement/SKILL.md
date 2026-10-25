@@ -15,7 +15,7 @@ Read the repository's `## Agent workflow` section: base branch, Tracker, Decisio
 
 - **The intent:**
   - **A ticket:** read it through the tool the Tracker line names, with its acceptance criteria, and the decision note it cites by ID.
-  - **A decision note:** when it has open tickets, found as the `note-to-tickets` skill finds them, work on the ticket the user named, or else on the first open ticket that nothing blocks, and say which. A proposal without tickets that needs more than one pull request is not started: the report says it needs splitting with the `note-to-tickets` skill.
+  - **A decision note:** only an accepted note is carried out. A proposal is not started: the report says that the user must accept it first, through the `decision-notes` skill. When an accepted note has open tickets, found as the `note-to-tickets` skill finds them, work on the ticket the user named, or else on the first open ticket that nothing blocks, and say which. A proposal without tickets that needs more than one pull request is not started: the report says it needs splitting with the `note-to-tickets` skill.
   - **A request** in the conversation.
 - **The kind:** a defect, such as a ticket labeled `kind/bug-fix` or a report that something is broken; a change of structure only, such as a ticket labeled `kind/simplification` or `kind/architecture`, or a request to refactor; or new or changed behavior.
 - **The starting state:** record `git status`. Changes already in the working tree are not part of this work: leave them as they are, and keep a list of the files this run changes.
@@ -45,14 +45,14 @@ Run the `simplify-change` skill with the files this run changed as its scope, an
 
 Done when `simplify-change` has reported, and each defect it raised is fixed or in the report.
 
-## 4. Bring the decision notes up to date
+## 4. Check the trace
 
-- Update each implemented note that names what this work changed, such as a path, a symbol, a default, or a mechanism, as the `decision-notes` skill keeps implemented notes current.
-- When this work completes a proposal, because the proposal has no tickets or this is its last open ticket, carry out the "Implement a proposal" procedure of the `decision-notes` skill.
-- A note that `design-interface` wrote is already part of the change.
-- Code this work wrote whose shape a note explains cites that note, and code that cites a note this work archived, folded, or deleted cites the current owner instead, as the `decision-notes` skill describes for citing notes from code.
+This work carries out decisions; it writes none. It changes no decision note: a proposal belongs to planning, and the other notes are frozen.
 
-Done when every note that names what changed is current, every citation is in place, and the `decision-notes` verifier passes.
+- Code this work wrote whose shape the accepted note explains cites that note, as the `decision-notes` skill describes for citing notes from code.
+- A conflict between this work and an accepted note, and a choice that is hard to reverse and that no note settles, go to the report as open decisions for planning. The work keeps to the accepted notes meanwhile.
+
+Done when every citation is in place, every open decision is in the report, and the `decision-notes` verifier passes with `--base`.
 
 ## 5. Review it
 
@@ -88,7 +88,7 @@ Report:
 - the simplifications applied, and those skipped, with the reasons;
 - the review: each finding with its verdict and outcome, and the number of rounds, or that the repository has no review skill;
 - the checks run and their results;
-- the decisions left to the user: behavior changes, proposals beyond the change, a coverage tool, missing boundary checks, unconfirmed findings, and the choices `design-interface` made as assumptions;
+- the decisions left to the user: the open decisions and the conflicts with accepted notes, behavior changes, proposals beyond the change, a coverage tool, missing boundary checks, unconfirmed findings, and the choices `design-interface` made as assumptions;
 - the commits and the pull request, or that the work is uncommitted, with its files.
 
 Write it in the conversation's language, by the principles of the `plain-language` skill.

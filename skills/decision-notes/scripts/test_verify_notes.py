@@ -1,5 +1,7 @@
 """Tests for verify_notes.py. Run: python -m unittest discover -s skills/decision-notes/scripts"""
 
+import os
+import stat
 import subprocess
 import sys
 import tempfile
@@ -36,21 +38,21 @@ Malformed policies are still rejected.
 A future caller must parse before calling the resolver.
 """
 
-IMPLEMENTED = """\
+ACCEPTED = """\
 # Event-sourced sessions
 
-Status: implemented
+Status: accepted
 
 ## Problem
 
 Session state was rebuilt from mutable files.
 
-## Decision
+## Proposal
 
-The session log is the only source of truth.
+The session log becomes the only source of truth.
 
 ```markdown
-## Proposal
+## Problem
 
 This heading is an example inside a code block.
 ```
@@ -59,9 +61,13 @@ This heading is an example inside a code block.
 
 **Snapshot files.** They drift from the log.
 
-## Consequences
+## Acceptance criteria
 
-Replays are exact; the log grows without bound.
+A session replays exactly from its log.
+
+## Risks
+
+The log grows without bound.
 """
 
 REJECTED = """\
@@ -85,7 +91,7 @@ Merge them into one package.
 ARCHIVED = """\
 # Old storage layout
 
-Status: implemented
+Status: accepted
 Archived: 2026-03-01
 
 ## Problem
@@ -103,7 +109,7 @@ def run_verifier(notes_dir, *args):
 def git(root, *args):
     subprocess.run(
         ["git", "-C", str(root), "-c", "user.name=test", "-c", "user.email=test@example.com",
-         "-c", "commit.gpgsign=false", *args],
+         "-c", "commit.gpgsign=false", "-c", "core.hooksPath=", *args],
         check=True, capture_output=True,
     )
 
@@ -119,6 +125,8 @@ class VerifyNotesTest(unittest.TestCase):
     def write(self, relative, text):
         path = self.notes / relative
         path.parent.mkdir(parents=True, exist_ok=True)
+        if path.exists():
+            os.chmod(path, stat.S_IREAD | stat.S_IWRITE)
         path.write_text(text, encoding="utf-8")
         return path
 
@@ -127,22 +135,31 @@ class VerifyNotesTest(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text, encoding="utf-8")
 
+    def commit_base(self):
+        git(self.root, "init", "-q")
+        git(self.root, "add", "-A")
+        git(self.root, "commit", "-q", "-m", "base")
+
     def assert_problem(self, result, fragment):
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         self.assertIn(fragment, result.stdout)
 
-    def test_valid_tree_passes(self):
-        link = "\nSee [the proposal](../../proposed/architecture/2026-01-02-parse-policy-once.md).\n"
-        self.write("proposed/architecture/2026-01-02-parse-policy-once.md", PROPOSED)
-        self.write("implemented/architecture/2026-01-01-event-sourced-sessions.md", IMPLEMENTED + link)
-        self.write("rejected/simplification/2026-01-03-merge-compaction-packages.md", REJECTED)
-        self.write("archived/architecture/2025-12-01-old-storage-layout.md", ARCHIVED)
-        result = run_verifier(self.notes)
+    def assert_clean(self, result):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_valid_tree_passes(self):
+        citation = f"\nIt builds on {CITE}2026-01-01-event-sourced-sessions.\n"
+        self.write("proposed/architecture/2026-01-02-parse-policy-once.md", PROPOSED + citation)
+        self.write("accepted/architecture/2026-01-01-event-sourced-sessions.md", ACCEPTED)
+        self.write("accepted/AGENTS.md", "# Accepted decision notes\n")
+        self.write("accepted/CLAUDE.md", "@AGENTS.md\n")
+        self.write("rejected/simplification/2026-01-03-merge-compaction-packages.md", REJECTED)
+        self.write("archived/architecture/2025-12-01-old-storage-layout.md", ARCHIVED)
+        self.assert_clean(run_verifier(self.notes))
+
     def test_status_must_match_lifecycle_folder(self):
-        self.write("implemented/feature/2026-01-02-parse-policy-once.md", PROPOSED)
-        self.assert_problem(run_verifier(self.notes), "line 3 must be 'Status: implemented'")
+        self.write("accepted/feature/2026-01-02-parse-policy-once.md", PROPOSED)
+        self.assert_problem(run_verifier(self.notes), "line 3 must be 'Status: accepted'")
 
     def test_layout_rejects_unknown_class_and_bad_filename(self):
         self.write("proposed/refactor/2026-01-02-parse-policy-once.md", PROPOSED)
@@ -152,60 +169,103 @@ class VerifyNotesTest(unittest.TestCase):
         self.assertIn("Parse_Policy.md: notes are files named", result.stdout)
 
     def test_missing_required_section(self):
-        self.write("proposed/feature/2026-01-02-parse-policy-once.md", PROPOSED.replace("## Risks", "## Downsides"))
+        self.write("accepted/feature/2026-01-02-parse-policy-once.md",
+                   PROPOSED.replace("Status: proposed", "Status: accepted").replace("## Risks", "## Downsides"))
         self.assert_problem(run_verifier(self.notes), "missing required section '## Risks'")
-
-    def test_proposal_sections_are_not_allowed_in_implemented(self):
-        text = IMPLEMENTED.replace("## Consequences", "## Acceptance criteria\n\nDone.\n\n## Consequences")
-        self.write("implemented/architecture/2026-01-01-event-sourced-sessions.md", text)
-        self.assert_problem(run_verifier(self.notes), "'## Acceptance criteria' is not allowed in implemented/")
 
     def test_marker_stands_in_for_alternatives(self):
         section = "## Alternatives considered\n\n**Snapshot files.** They drift from the log.\n"
-        text = IMPLEMENTED.replace(section, "<!-- decision-notes: alternatives-not-recorded -->\n")
-        self.assertNotEqual(text, IMPLEMENTED)
-        self.write("implemented/architecture/2026-01-01-event-sourced-sessions.md", text)
-        result = run_verifier(self.notes)
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        text = ACCEPTED.replace(section, "<!-- decision-notes: alternatives-not-recorded -->\n")
+        self.assertNotEqual(text, ACCEPTED)
+        self.write("accepted/architecture/2026-01-01-event-sourced-sessions.md", text)
+        self.assert_clean(run_verifier(self.notes))
 
-    def test_broken_relative_link_in_active_note(self):
-        text = IMPLEMENTED + "\nSee [the old note](../feature/2026-01-01-gone.md).\n"
-        self.write("implemented/architecture/2026-01-01-event-sourced-sessions.md", text)
-        self.assert_problem(run_verifier(self.notes), "broken link '../feature/2026-01-01-gone.md'")
+    def test_broken_relative_link_in_a_proposal(self):
+        self.write("proposed/architecture/2026-01-02-parse-policy-once.md", PROPOSED + "\nSee [the guide](../../missing.md).\n")
+        self.assert_problem(run_verifier(self.notes), "broken link '../../missing.md'")
+
+    def test_a_proposal_refers_to_another_note_by_id(self):
+        self.write("accepted/architecture/2026-01-01-event-sourced-sessions.md", ACCEPTED)
+        link = "\nSee [sessions](../../accepted/architecture/2026-01-01-event-sourced-sessions.md).\n"
+        self.write("proposed/architecture/2026-01-02-parse-policy-once.md", PROPOSED + link)
+        self.assert_problem(run_verifier(self.notes), "refer to another note by its ID")
+
+    def test_a_proposal_cites_a_missing_note(self):
+        self.write("proposed/architecture/2026-01-02-parse-policy-once.md", PROPOSED + f"\n{CITE}2026-01-09-gone\n")
+        self.assert_problem(run_verifier(self.notes), "cites decision note '2026-01-09-gone', which does not exist")
 
     def test_archived_note_needs_archived_line(self):
         text = ARCHIVED.replace("Archived: 2026-03-01\n", "")
         self.write("archived/architecture/2025-12-01-old-storage-layout.md", text)
         self.assert_problem(run_verifier(self.notes), "line 4 must be 'Archived: YYYY-MM-DD'")
 
-    def test_base_reports_changed_archived_note_only(self):
-        sealed = self.write("archived/architecture/2025-12-01-old-storage-layout.md", ARCHIVED)
-        git(self.root, "init", "-q")
-        git(self.root, "add", "-A")
-        git(self.root, "commit", "-q", "-m", "base")
-        sealed.write_text(ARCHIVED + "\nA later edit.\n", encoding="utf-8")
-        self.write("archived/feature/2026-02-01-newly-archived.md", ARCHIVED)
+    def test_header_holds_only_the_lines_the_lifecycle_script_writes(self):
+        text = ACCEPTED.replace("Status: accepted\n", "Status: accepted\nOwner: the storage team\n")
+        self.write("accepted/architecture/2026-01-01-event-sourced-sessions.md", text)
+        self.assert_problem(run_verifier(self.notes), "sessions.md:4: 'Owner: the storage team' is not a header line")
+
+    def test_supersession_links_go_both_ways(self):
+        old = ACCEPTED.replace("# Event-sourced sessions", "# Snapshot sessions")
+        new = ACCEPTED.replace("Status: accepted\n", "Status: accepted\nSupersedes: 2026-01-01-snapshot-sessions\n")
+        self.write("accepted/architecture/2026-01-01-snapshot-sessions.md", old)
+        self.write("accepted/architecture/2026-02-01-event-sourced-sessions.md", new)
+        self.assert_problem(run_verifier(self.notes),
+                            "2026-01-01-snapshot-sessions has no 'Superseded by: 2026-02-01-event-sourced-sessions'")
+
+    def test_base_reports_edits_and_deletions_of_frozen_notes(self):
+        self.write("accepted/architecture/2026-01-01-event-sourced-sessions.md", ACCEPTED)
+        self.write("rejected/simplification/2026-01-03-merge-compaction-packages.md", REJECTED)
+        self.write("archived/architecture/2025-12-01-old-storage-layout.md", ARCHIVED)
+        self.commit_base()
+        self.write("accepted/architecture/2026-01-01-event-sourced-sessions.md", ACCEPTED + "\nA later edit.\n")
+        (self.notes / "rejected/simplification/2026-01-03-merge-compaction-packages.md").unlink()
+        self.write("archived/architecture/2025-12-01-old-storage-layout.md", ARCHIVED + "\nA later edit.\n")
 
         result = run_verifier(self.notes, "--base", "HEAD")
 
-        self.assert_problem(result, "2025-12-01-old-storage-layout.md: archived note changed since HEAD")
-        self.assertNotIn("newly-archived", result.stdout)
+        self.assert_problem(result, "2026-01-01-event-sourced-sessions.md: frozen note changed since HEAD")
+        self.assertIn("2026-01-03-merge-compaction-packages.md: frozen note deleted since HEAD", result.stdout)
+        self.assertIn("2025-12-01-old-storage-layout.md: frozen note changed since HEAD", result.stdout)
 
-    def test_code_may_cite_implemented_proposed_and_rejected_notes(self):
-        self.write("implemented/architecture/2026-01-01-event-sourced-sessions.md", IMPLEMENTED)
+    def test_base_reports_a_frozen_note_moved_back_to_proposals(self):
+        self.write("accepted/architecture/2026-01-01-event-sourced-sessions.md", ACCEPTED)
+        self.commit_base()
+        (self.notes / "accepted/architecture/2026-01-01-event-sourced-sessions.md").unlink()
+        self.write("proposed/architecture/2026-01-01-event-sourced-sessions.md",
+                   ACCEPTED.replace("Status: accepted", "Status: proposed"))
+
+        result = run_verifier(self.notes, "--base", "HEAD")
+
+        self.assert_problem(result, "frozen note moved from accepted/ to proposed/ since HEAD")
+
+    def test_base_allows_the_lifecycle_scripts_own_edits(self):
+        old = ACCEPTED.replace("# Event-sourced sessions", "# Snapshot sessions")
+        self.write("accepted/architecture/2026-01-01-snapshot-sessions.md", old)
+        self.write("accepted/architecture/2026-02-01-event-sourced-sessions.md", ACCEPTED)
+        self.commit_base()
+        (self.notes / "accepted/architecture/2026-01-01-snapshot-sessions.md").unlink()
+        self.write("archived/architecture/2026-01-01-snapshot-sessions.md", old.replace(
+            "Status: accepted\n", "Status: accepted\nArchived: 2026-03-01\nSuperseded by: 2026-02-01-event-sourced-sessions\n"))
+        self.write("accepted/architecture/2026-02-01-event-sourced-sessions.md", ACCEPTED.replace(
+            "Status: accepted\n", "Status: accepted\nSupersedes: 2026-01-01-snapshot-sessions\n"))
+
+        self.assert_clean(run_verifier(self.notes, "--base", "HEAD"))
+
+    def test_code_may_cite_notes_in_every_lifecycle(self):
+        self.write("accepted/architecture/2026-01-01-event-sourced-sessions.md", ACCEPTED)
         self.write("proposed/architecture/2026-01-02-parse-policy-once.md", PROPOSED)
         self.write("rejected/simplification/2026-01-03-merge-compaction-packages.md", REJECTED)
+        self.write("archived/architecture/2025-12-01-old-storage-layout.md", ARCHIVED)
         self.write_source("src/log.ts", f"/**\n * The log is the only source of truth.\n * {CITE}2026-01-01-event-sourced-sessions\n */\n")
         self.write_source("src/policy.py", f"# {CITE}2026-01-02-parse-policy-once\n# {CITE}2026-01-03-merge-compaction-packages\n")
+        self.write_source("src/store.ts", f"// {CITE}2025-12-01-old-storage-layout\n")
         git(self.root, "init", "-q")
         git(self.root, "add", "src/log.ts")
 
-        result = run_verifier(self.notes)
-
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assert_clean(run_verifier(self.notes))
 
     def test_code_citation_of_a_missing_note(self):
-        self.write("implemented/architecture/2026-01-01-event-sourced-sessions.md", IMPLEMENTED + f"\n{CITE}2026-01-09-gone\n")
+        self.write("accepted/architecture/2026-01-01-event-sourced-sessions.md", ACCEPTED)
         self.write_source(".gitignore", "build/\n")
         self.write_source("build/out.js", f"// {CITE}2026-01-09-gone\n")
         self.write_source("src/new.ts", f"export const a = 1;\n// {CITE}2026-01-09-gone\n")
@@ -215,16 +275,6 @@ class VerifyNotesTest(unittest.TestCase):
 
         self.assert_problem(result, "src/new.ts:2: cites decision note '2026-01-09-gone', which does not exist")
         self.assertNotIn("out.js", result.stdout)
-        self.assertNotIn("event-sourced-sessions.md", result.stdout)
-
-    def test_code_citation_of_an_archived_note(self):
-        self.write("archived/architecture/2025-12-01-old-storage-layout.md", ARCHIVED)
-        self.write_source("src/store.ts", f"// {CITE}2025-12-01-old-storage-layout\n")
-        git(self.root, "init", "-q")
-
-        result = run_verifier(self.notes)
-
-        self.assert_problem(result, "src/store.ts:1: cites archived decision note '2025-12-01-old-storage-layout'")
 
 
 if __name__ == "__main__":

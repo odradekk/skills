@@ -15,7 +15,7 @@ The skill runs without stopping for anyone, so that it can be one step of a long
 
 Read the repository's `## Agent workflow` section: Decision notes, and the check table. If the section is missing, find the checks in the manifests for this run only, and say so in the report.
 
-- **The intent:** a ticket or decision note of class `simplification` or `architecture`; a finding of the `deep-code-review`, `find-simplifications`, or `improve-architecture` skill; or a request. Read the decision notes and design documents that touch the area: implemented notes and the parts of designs that describe the code as it is are constraints, and rejected notes are guardrails.
+- **The intent:** a ticket, or an accepted decision note, of class `simplification` or `architecture`; a finding of the `deep-code-review`, `find-simplifications`, or `improve-architecture` skill; or a request. Read the decision notes and design documents that touch the area: accepted notes and the parts of designs that describe the code as it is are constraints, and rejected notes are guardrails.
 - **The area:** the files whose structure changes, and the **surviving seams**: the interfaces that callers use both before and after. The behavior is pinned there.
 - **Interfaces with consumers outside the repository,** such as an export of a package others install, a documented API, a plugin or extension point, a configuration key users set, or a stored or wire format, keep their shape: the refactor changes what is behind them. Whether to change such an interface goes to the report, for the user to decide.
 - **The checks:** run the narrowest automated checks for the area now. When they fail, stop and report: a refactor starts from passing checks.
@@ -61,7 +61,7 @@ Done when the deletions are made and the pin passes.
 
 - Make one move at a time, such as an extraction, an inlining, a rename, a move, or a merge, and run the pin and the type check after each. A step that breaks the pin is undone and taken again in smaller pieces.
 - Migrate every caller in the repository in the same change, then delete the old interface. Leave no compatibility layer and no old and new paths side by side, except for the interfaces with outside consumers from step 1, which keep their shape.
-- Search a renamed or moved name in every form a consumer could use, as step 4 of `find-simplifications` lists them: string forms, configuration, documentation, decision notes, and `Decision note:` citations.
+- Search a renamed or moved name in every form a consumer could use, as step 4 of `find-simplifications` lists them: string forms, configuration, and documentation. Decision notes stay as they are: they name concepts rather than paths, and code cites them by ID, which a move does not change.
 - Mechanical edits across many files may go to a sub-agent, with a precise scope: the files, the names being moved, and the behavior to keep. Review its diff yourself.
 - Keep the tests that check the behavior at the surviving seams. Delete a test of internals that the restructuring removed, once a test at a surviving seam covers the same behavior.
 
@@ -75,10 +75,10 @@ A defect found along the way is not fixed here, since fixing it changes behavior
 
 Done when every check passes and something on the list is gone, or the restructuring is reverted.
 
-## 7. Bring the tests and notes up to date
+## 7. Bring the tests and citations up to date
 
 - **Characterization tests:** keep those that check a behavior callers rely on at a surviving seam, named for that behavior, as regression tests. Delete those that only pin incidental details, by the `tdd` rules.
-- **Decision notes:** record a lasting structural decision as an `architecture` note and cite it from the code, as `design-interface` does in its step 7. Update the implemented notes that name what moved or was renamed, as the `decision-notes` skill keeps them current. When this work completes a proposal, carry out the "Implement a proposal" procedure of the `decision-notes` skill.
+- **Citations:** cite the accepted note this work carries out from the code whose shape it explains, as `design-interface` does in its step 7. This skill writes and changes no decision note: a structural decision that no accepted note makes goes to the report as an open decision for planning.
 
 Done when every characterization test is kept or removed by those rules, and the `decision-notes` verifier passes.
 
@@ -89,7 +89,7 @@ Report:
 - the target, and what disappeared;
 - the pin: the tests it used, the characterization tests kept and removed, the equivalence check, and the injected errors with the tests that caught them;
 - the steps taken, and any that were undone;
-- the outside interfaces that kept their shape, and the defects found, as decisions for the user;
+- the outside interfaces that kept their shape, the defects found, and the open decisions, as decisions for the user;
 - the checks run and their results, or that the restructuring was reverted, and why;
 - the commits, or that the changes are uncommitted.
 

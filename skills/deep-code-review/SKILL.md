@@ -21,7 +21,7 @@ Done when you have the list of files in scope.
 
 Read the active decision notes that touch the paths in scope:
 
-- **Implemented notes** are constraints. A finding keeps them, or says plainly that it challenges one and why.
+- **Accepted notes** are constraints. A finding keeps them, or says plainly that it challenges one and why.
 - **Rejected notes** are proposals already turned down. A finding that repeats one must say what has changed since the rejection.
 - **Proposed notes** are planned work. A finding that overlaps one points to it.
 

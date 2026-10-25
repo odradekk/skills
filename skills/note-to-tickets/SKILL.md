@@ -1,6 +1,6 @@
 ---
 name: note-to-tickets
-description: Split a proposed decision note into tickets on the repository's tracker, one pull request each, every ticket pointing back to the note; also trace a note or ticket to its tickets, pull requests, and commits, and find the tickets ready to start. Use when a proposal is ready to be built and its work needs dividing, or when the user asks which tickets, pull requests, or commits belong to a note or a ticket, or what to work on next.
+description: Split a decision note into tickets on the repository's tracker, drafted while it is a proposal and published once the user accepts it, one pull request each, every ticket pointing back to the note; also trace a note or ticket to its tickets, pull requests, and commits, and find the tickets ready to start. Use when a proposal is ready to be built and its work needs dividing, or when the user asks which tickets, pull requests, or commits belong to a note or a ticket, or what to work on next.
 ---
 
 # Note to tickets
@@ -14,7 +14,7 @@ Each link is written once, where it is created; the reverse direction comes from
 | Ticket → note | The ticket's first line: `Decision note: <note ID>` | Search tickets for the note ID |
 | Ticket → blocking ticket | The tracker's own blocking relation; only a tracker without one gets a `Blocked by` section in the ticket body | The tracker shows both directions |
 | Pull request → ticket | The tracker's closing reference, such as `Fixes #N`, in the description of the pull request that completes the ticket; work committed straight to the base branch carries the ticket reference in its commit messages instead | The tracker lists them on the ticket |
-| Pull request → note | The pull request that implements the proposal moves or edits the note | `git log --follow` on the note |
+| Pull request → note | The note ID in the description of the pull request that carries out the note, which the `pr` skill writes | A search of pull requests for the note ID, such as `gh pr list --search '"<note ID>" in:body' --state all` |
 
 The note ID is the note's filename without `.md`. It stays the same when the note moves between lifecycle folders, so links by ID never break. The note itself lists none of its tickets.
 
@@ -22,13 +22,13 @@ The note ID is the note's filename without `.md`. It stays the same when the not
 
 Read the `Decision notes`, `Tracker`, and `Labels` lines of the repository's `## Agent workflow` section; if the section is missing, run the `setup-agent-workflow` skill first. The Tracker line names the tool that reaches the tracker, the ticket reference and closing reference, and whether the tracker records blocking relations and labels natively. When it does not say, find out from the tool's help, and suggest refreshing the section with `setup-agent-workflow`. When the tracker is `none`, tell the user that this repository has no tracker to publish to, and stop.
 
-Only a note in `proposed/` gets tickets: implemented work is done, and rejected work is not built. Read the whole note and the code its Proposal touches. Then search the tracker for tickets whose body contains the note ID, for example `gh issue list --search '"<note ID>" in:body' --state all --json number,title,state`. When tickets exist, this run extends or revises them instead of creating duplicates.
+A note in `proposed/` gets its open choices settled and its tickets drafted during planning; its tickets are published once the user has accepted it, so that they point at a decision that no longer changes. An accepted note gets its tickets drafted and published, but cannot change: an open choice a ticket depends on stops that ticket, and the report names it for planning. Rejected and archived notes get no tickets. Read the whole note and the code its Proposal touches. Then search the tracker for tickets whose body contains the note ID, for example `gh issue list --search '"<note ID>" in:body' --state all --json number,title,state`. When tickets exist, this run extends or revises them instead of creating duplicates.
 
 Done when you know the proposal, the code it touches, the tracker's capabilities, and every existing ticket for the note.
 
 ## 2. Check that the note is settled
 
-List the hard-to-reverse choices the work requires. Each must be settled in the note, in its Proposal or one of its free-form sections. Settle every open question that a ticket would depend on through the `grill-decision` skill, and update the note, before drafting that ticket.
+List the hard-to-reverse choices the work requires. Each must be settled in the note, in its Proposal or one of its free-form sections. While the note is a proposal, settle every open question that a ticket would depend on through the `grill-decision` skill, and update the note, before drafting that ticket. An accepted note cannot be updated: a ticket that depends on an open question waits, and the report names the question for planning.
 
 Done when every choice the tickets depend on is written in the note.
 
@@ -88,6 +88,8 @@ Done when the user has approved the drafts.
 
 ## 6. Publish
 
+Publish only the tickets of an accepted note. When the note is still a proposal, the approved drafts wait until the user accepts it through the `decision-notes` skill.
+
 Create the tickets in the order from step 3, blockers first, so that every blocker already exists when a ticket that needs it is created. Create each ticket with its labels and, when the tracker records blocking relations, with its blockers set at creation. Write each body to a temporary file outside the repository. For example, with `gh`:
 
 ```sh
@@ -104,7 +106,7 @@ Done when every approved ticket exists, its labels and blocking relations match 
 
 Use the tracker's tool for each query; the examples use `gh`.
 
-- **A note's commits:** find the note with `git ls-files '*<note ID>.md'`; `git log --follow --format='%h %as %s' -- <note path>` lists the commits that wrote, moved, or implemented it.
+- **A note's commits:** find the note with `git ls-files '*<note ID>.md'`; `git log --follow --format='%h %as %s' -- <note path>` lists the commits that wrote or moved it; the commits that carried it out are found through its tickets and pull requests.
 - **A note's tickets:** search the tracker for the note ID, as in step 1.
 - **A ticket's note:** the ticket's first line.
 - **A ticket's blockers and the tickets it blocks:** the tracker's blocking relation (`gh issue view <N> --json blockedBy,blocking`), or the `Blocked by` sections where the tracker has none.

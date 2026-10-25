@@ -12,7 +12,7 @@ An interview that settles decisions with the user. Facts are your job: find them
 A skill that calls grill passes four things:
 
 - **Topic:** the question to settle.
-- **Settled ground:** facts and decisions already fixed, such as constraints from implemented decision notes, and options rejected earlier together with their reasons. They become prerequisites in the tree, not questions.
+- **Settled ground:** facts and decisions already fixed, such as constraints from accepted decision notes, and options rejected earlier together with their reasons. They become prerequisites in the tree, not questions.
 - **Required answers:** the questions the caller's output cannot be written without, such as what counts as done.
 - **Reader:** who reads the caller's output.
 

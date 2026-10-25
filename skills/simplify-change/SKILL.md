@@ -47,11 +47,11 @@ Apply a candidate when all of these hold:
   - Every other candidate changes which statements run, such as deleting a branch or a check, or replacing code with a simpler form or an existing helper. The tests that run the replaced code prove it. Two kinds need no test: a change to types only, which the type check proves, and a literal replaced by a named constant of the same value, which the constant's definition proves.
   - When no test runs the replaced code, skip the candidate, and report the test it needs and the seam where that test belongs. Writing the test belongs to the work that wrote the code, through the `tdd` skill.
 - **It stays inside the scope:** it edits the files of the change, or deletes what the change left unused; with a named scope, only the files in it. A candidate that needs more goes back to whoever named the scope.
-- **Nothing outside requires it.** Search the active decision notes and the design documents of the intent for its name, and keep it when an implemented note or the current design requires it. Keep anything others may use without the repository showing it: an export of a package others install, a documented API, a plugin or extension point, a configuration key users set, or a stored or wire format.
+- **Nothing outside requires it.** Search the active decision notes and the design documents of the intent for its name, and keep it when an accepted note or the current design requires it. Keep anything others may use without the repository showing it: an export of a package others install, a documented API, a plugin or extension point, a configuration key users set, or a stored or wire format.
 
 Otherwise the candidate goes to the report:
 
-- a restructuring beyond the change, with an offer to record it as a proposed `simplification` note with the `decision-notes` skill;
+- a restructuring beyond the change, as a candidate for planning to take up;
 - a change of behavior, for the user to decide;
 - a defect you noticed, as a claim in the form of step 1 of the `verify-bug` skill: location, trigger, symptom, and kind.
 
@@ -61,7 +61,7 @@ Drop a candidate that only renames or moves code, or that merges two things mean
 
 ## 4. Apply
 
-Apply the accepted candidates, and update what names the removed code: comments, docs, tests, and the implemented decision notes that name it, by the `decision-notes` skill.
+Apply the accepted candidates, and update what names the removed code: comments, docs, and tests. Decision notes stay as they are; this skill changes no note.
 
 Then run the automated checks from step 1 again, adding the narrowest checks for every file you touched, and the manual checks that the table names for what the applied candidates touch: open the pages they reach directly and watch the console. List as not checked a page that needs a particular state to reach, or that writes data the user keeps, such as a save. When a check fails, find the candidate that broke it, reapplying them one at a time if it is not obvious, revert that candidate completely, and move it to the report.
 

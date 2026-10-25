@@ -7,7 +7,8 @@ AGENTS.md                          instructions every agent reads; agents look f
 CLAUDE.md                          one line, @AGENTS.md, because Claude Code reads CLAUDE.md
 .claude/skills -> ../.agents/skills   link, so Claude Code loads the project skills
 .agents/
-  notes/                           decision notes; notes/.rgignore keeps archived/ out of searches
+  notes/                           decision notes; accepted/, rejected/, and archived/ are frozen and read-only,
+                                   each with an AGENTS.md that says so; notes/.rgignore keeps archived/ out of searches
   skills/                          project skills, such as the generated <repo>-code-review
   hooks/                           git hooks; core.hooksPath points here; hooks/.gitattributes keeps LF
   scripts/                         the scripts the hooks run

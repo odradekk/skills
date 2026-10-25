@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Structure is worth changing where it makes future changes expensive: where understanding one concept means reading many modules, where callers must know a module's insides, or where two files change together every time. This skill finds those places, proposes a deeper structure for each with its evidence and a figure, and turns the one the user picks into a decision.
 
-It changes no code. The decision goes on to the `note-to-tickets` and `implement` skills, and `implement` carries it out through the `refactor` skill. What the project could remove instead of restructuring belongs to the `find-simplifications` skill, and the review of a change to the `deep-code-review` skill. The vocabulary of module, interface, depth, and seam is the one the `design-interface` skill defines.
+It changes no code. Once the user accepts the decision, it goes on to the `note-to-tickets` and `implement` skills, and `implement` carries it out through the `refactor` skill. What the project could remove instead of restructuring belongs to the `find-simplifications` skill, and the review of a change to the `deep-code-review` skill. The vocabulary of module, interface, depth, and seam is the one the `design-interface` skill defines.
 
 ## 1. Set the scope and read the ground
 
@@ -21,7 +21,7 @@ The scope is the area the user names. Otherwise it is where changes concentrate,
 
 Weight the scope toward those files. When the changes are scattered with no clear center, widen it.
 
-Read the ground as step 1 of the `find-simplifications` skill reads it: implemented notes, especially of class `architecture`, are constraints; rejected notes are proposals already declined, and a candidate that repeats one answers its reason with new evidence; proposed notes are planned work; and in design documents, the parts that describe the code as it is are constraints, and the parts that describe plans are planned work.
+Read the ground as step 1 of the `find-simplifications` skill reads it: accepted notes, especially of class `architecture`, are constraints; rejected notes are proposals already declined, and a candidate that repeats one answers its reason with new evidence; proposed notes are planned work; and in design documents, the parts that describe the code as it is are constraints, and the parts that describe plans are planned work.
 
 Done when you have the scope, with its most-changed files and the pairs that change together, and every active note and design document that touches it is listed with its role.
 
@@ -48,7 +48,7 @@ Done when every part of the scope has been searched.
 - what disappears: interfaces, layers, copies, branches, files, and the concepts a caller must learn;
 - the tests: which would move to the deeper interface, and which would no longer be needed;
 - the dependency category of what sits behind the new seam, as step 1 of `design-interface` sorts dependencies;
-- any conflict with a decision note: a candidate that goes against an implemented note says why the friction justifies reopening it;
+- any conflict with a decision note: a candidate that goes against an accepted note says why the friction justifies reopening it;
 - its strength: **strong** when the friction shows in the history and in the code, **worth exploring** when it shows in the code only, and **speculative** when it is a likely problem not yet seen.
 
 Reject a candidate that only moves code, or whose list of what disappears is short enough that the next reader would not notice.
@@ -69,6 +69,6 @@ Done when the page is written and the user has the list.
 
 Run the `grill-decision` skill on the candidate the user picks: its constraints and dependencies, the shape of the deeper module, what sits behind its seam, and which tests survive. When the shape needs alternatives, the comparison of shapes in step 3 of `design-interface` supplies them. The result is a proposed `architecture` note, written by the `decision-notes` skill in the language the `Decision notes` line names. A proposal that needs more than one pull request goes on to the `note-to-tickets` skill.
 
-When the user rejects a candidate for a reason that a later survey would need, offer to record it as a rejected `architecture` note, so the next survey reads the reason instead of proposing it again; write it only when the user agrees.
+When the user rejects a candidate for a reason that a later survey would need, offer to record it as a rejected `architecture` note, written as a proposal and rejected through the `decision-notes` skill, so the next survey reads the reason instead of proposing it again; write it only when the user agrees.
 
 Done when the chosen candidate has its note, and each rejection with a lasting reason is recorded or declined.

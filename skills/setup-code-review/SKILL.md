@@ -17,7 +17,7 @@ When the generated skill already exists, this run is a refresh. Its last line re
 
 ## 2. Collect the rule sources
 
-Find the written rules: every `AGENTS.md`, `CONTRIBUTING.md`, architecture and design documents, style guides, implemented decision notes (especially the `architecture` and `process` classes), postmortems, and open issues that state rules. For each source, record:
+Find the written rules: every `AGENTS.md`, `CONTRIBUTING.md`, architecture and design documents, style guides, accepted decision notes (especially the `architecture` and `process` classes), postmortems, and open issues that state rules. For each source, record:
 
 - **Paths:** which parts of the repository it governs.
 - **Committed or not:** the generated skill is committed, so it can link only to committed files. List uncommitted sources separately; the user decides in step 5 whether to commit them first.
