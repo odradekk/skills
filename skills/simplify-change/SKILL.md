@@ -7,7 +7,7 @@ description: Remove what a change makes the project maintain without needing it,
 
 Code that was just written carries extras: a parameter no caller passes, a fallback for a case that cannot occur, a helper the codebase already has, an old function that nothing calls any more. Each one is something the project must now maintain for no reason. This skill finds them in one change and removes them while keeping its behavior, and the change's own tests are the proof.
 
-It works inside the change. Restructurings that reach beyond it belong to the `deep-code-review` skill, and removals in code the change did not touch to the `find-simplifications` skill. It does not hunt for defects, and it does not chase speed: a candidate whose only gain is speed goes through the `measure-performance` skill before anyone keeps it.
+It works inside the change. Restructurings that reach beyond it belong to the `improve-architecture` skill, and removals in code the change did not touch to the `find-simplifications` skill. It does not hunt for defects, and it does not chase speed: a candidate whose only gain is speed goes through the `measure-performance` skill before anyone keeps it.
 
 ## 1. Set the scope
 

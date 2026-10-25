@@ -1,19 +1,19 @@
 ---
 name: deep-code-review
-description: A strict, user-started review of a change or an area for restructurings that remove concepts while keeping behavior, run by fresh sub-agents and grounded in the decision notes.
+description: A strict, user-started review of a change for restructurings that remove concepts while keeping behavior, run by fresh sub-agents and grounded in the decision notes.
 disable-model-invocation: true
 ---
 
 # Deep code review
 
-This review is about structure, not correctness. It looks for restructurings that keep behavior and make branches, modes, flags, helpers, or layers unnecessary, and for changes that leave the code harder to hold in one's head. The project's own review skill (`<repo>-code-review`) checks a change against the project's rules and past failures; run both when both matter. Two other skills remove code instead of judging it: `simplify-change` removes from a change what it adds without need, before its review, and `find-simplifications` surveys code for what the project could stop maintaining, including capabilities worth giving up. This review judges the structure of what remains.
+This review is about structure, not correctness. It looks for restructurings that keep behavior and make branches, modes, flags, helpers, or layers unnecessary, and for changes that leave the code harder to hold in one's head. The project's own review skill (`<repo>-code-review`) checks a change against the project's rules and past failures; run both when both matter. Two other skills remove code instead of judging it: `simplify-change` removes from a change what it adds without need, before its review, and `find-simplifications` surveys code for what the project could stop maintaining, including capabilities worth giving up. This review judges the structure of what remains. Code as it stands, apart from a change, is surveyed by `improve-architecture` for structure worth changing and by `find-simplifications` for what can go.
 
 It only reviews: it reports findings and changes no code.
 
 ## 1. Set the scope
 
 - **By default:** the current branch's changes against its merge base with the base branch from the `## Agent workflow` section, plus uncommitted changes.
-- **When the user names a path:** that area as it stands, whether or not it changed.
+- **When the user names commits or a pull request:** those changes.
 
 Done when you have the list of files in scope.
 

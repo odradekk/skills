@@ -7,7 +7,7 @@ description: Build behavior test-first against a settled interface, with a test 
 
 The red-green loop is the easy part. The quality of test-driven work is decided around it: by the interface, and by which cases get a test. This skill derives the cases from the contract, so the tests cover what the interface promises, its boundaries and fixed numbers included, and nothing it rules out. It runs the loop one case at a time, and it finishes only when checks show that the tests would catch a wrong implementation.
 
-Cleanup after green, such as removing duplication or extras, belongs to the `simplify-change` skill, which runs these tests as its proof. A bug fix starts from the `diagnose-bug` skill instead.
+Cleanup after green, such as removing duplication or extras, belongs to the `simplify-change` skill, which runs these tests as its proof. A bug fix starts from the `diagnose-bug` skill instead, and a change of structure only from the `refactor` skill.
 
 The skill runs without stopping for anyone, so that it can be one step of a longer workflow: what it cannot do or decide itself goes into its report.
 
@@ -52,7 +52,7 @@ Done when every contract item has at least one case, and every case names its co
 These rules apply to every test written in this skill, and to every test the other skills write, such as the regression test of `diagnose-bug`. A test that breaks one is fixed or removed, even when it passes.
 
 - **Through the interface.** The test calls the module the way callers do and checks what callers observe. When a behavior can be checked only by reaching inside, the interface has the wrong shape: return to the `design-interface` skill.
-- **Expected values from an independent source:** a value worked out by hand from the intent, a known-good literal, or the specification. A value obtained by running the code, or computed in the test the same way the code computes it, checks nothing. Reading tunable data into the test as input is allowed; repeating the rule in the test to compute the expected value is not.
+- **Expected values from an independent source:** a value worked out by hand from the intent, a known-good literal, or the specification. A value obtained by running the code, or computed in the test the same way the code computes it, checks nothing. Reading tunable data into the test as input is allowed; repeating the rule in the test to compute the expected value is not. In a refactor, the code before the change is the independent source, so a characterization test may record what it returns, as the `refactor` skill describes.
 - **Stand-ins by dependency category,** as the `design-interface` skill sorts them: in-process dependencies run for real; a dependency with a local substitute runs that substitute; a service the project owns across a process or the network is replaced by an in-memory adapter at its port; only a third-party service gets a fake. The project's own modules are never mocked.
 - **One behavior per test,** named for what a caller observes, such as "a located captive can be rescued", not for how the code works.
 - **Deterministic:** time, random numbers, the filesystem, and the network are pinned or isolated.

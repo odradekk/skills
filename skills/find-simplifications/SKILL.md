@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Every API, field, state, configuration option, dependency, test, and document is something the project keeps maintaining: callers must consider it, changes must keep it working, and readers must learn it. This skill surveys an area or the whole repository for what the project could stop maintaining, proves each candidate, and turns the supported ones into proposals. A few well-supported candidates are worth more than a count of deletions; the measure is what the project no longer maintains, not how many lines go.
 
-Every candidate makes something disappear: a feature, a field, a state, a copy, a path, a dependency. A rearrangement that leaves the reader holding the same concepts belongs to the `deep-code-review` skill, and the change at hand to the `simplify-change` skill. This skill reports and proposes, and changes code only when the user asks to implement a candidate.
+Every candidate makes something disappear: a feature, a field, a state, a copy, a path, a dependency. A restructuring that keeps what the project maintains but arranges it into deeper modules belongs to the `improve-architecture` skill, and the change at hand to the `simplify-change` skill. This skill reports and proposes, and changes code only when the user asks to implement a candidate.
 
 ## 1. Set the scope and read the ground
 

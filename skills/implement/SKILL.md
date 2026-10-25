@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Carry one piece of work from its intent to reviewed code without stopping, by designing the interface with design-interface, building it test-first with tdd or fixing a defect with diagnose-bug, cleaning it up with simplify-change, and reviewing it with the repository's own code review skill, fixing the findings that hold. Use when the user asks to implement a ticket, a decision note's proposal, a feature, or a fix, and when another skill needs a change built.
+description: Carry one piece of work from its intent to reviewed code without stopping, by designing the interface with design-interface and building it test-first with tdd, fixing a defect with diagnose-bug, or restructuring code with refactor, then cleaning it up with simplify-change, and reviewing it with the repository's own code review skill, fixing the findings that hold. Use when the user asks to implement a ticket, a decision note's proposal, a feature, or a fix, and when another skill needs a change built.
 ---
 
 # Implement
@@ -17,7 +17,7 @@ Read the repository's `## Agent workflow` section: base branch, Tracker, Decisio
   - **A ticket:** read it through the tool the Tracker line names, with its acceptance criteria, and the decision note it cites by ID.
   - **A decision note:** when it has open tickets, found as the `note-to-tickets` skill finds them, work on the ticket the user named, or else on the first open ticket that nothing blocks, and say which. A proposal without tickets that needs more than one pull request is not started: the report says it needs splitting with the `note-to-tickets` skill.
   - **A request** in the conversation.
-- **The kind:** a defect, such as a ticket labeled `kind/bug-fix` or a report that something is broken, or new or changed behavior.
+- **The kind:** a defect, such as a ticket labeled `kind/bug-fix` or a report that something is broken; a change of structure only, such as a ticket labeled `kind/simplification` or `kind/architecture`, or a request to refactor; or new or changed behavior.
 - **The starting state:** record `git status`. Changes already in the working tree are not part of this work: leave them as they are, and keep a list of the files this run changes.
 - **The branch:** when the user wants a pull request and the current branch is the base branch, create a branch for this work before changing anything, named after the ticket or the change in the repository's usual style.
 
@@ -32,7 +32,9 @@ For new or changed behavior:
 
 For a defect, run the `diagnose-bug` skill on the report. It verifies the defect through `verify-bug`, finds the cause, and fixes it behind a regression test. When the verdict is anything but "holds", stop and report the verdict with its evidence.
 
-Done when the build reports that every case passed after failing first, or that the defect's red command passes with its regression test.
+For a change of structure only, run the `refactor` skill with the intent. When it reports that the target makes nothing disappear, or reverts the restructuring, stop: its report says why.
+
+Done when the build reports that every case passed after failing first, that the defect's red command passes with its regression test, or that the refactor passes its pin with something gone.
 
 ## 3. Simplify it
 
