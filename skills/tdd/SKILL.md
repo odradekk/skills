@@ -98,7 +98,7 @@ Report:
 - each injected error and the test that caught it, each one no test caught, with what was done, and the tunable data the tests read as input;
 - the checks run, and the deviations from the design found during the loop.
 
-Leave the changes uncommitted unless the user asked for a commit. The usual next steps are the `simplify-change` skill on this change, then a review.
+Leave the changes uncommitted unless the user asked for a commit. The usual next steps, which the `implement` skill runs, are the `simplify-change` skill on this change, then the repository's review.
 
 When another skill called this one, return the report to it. Otherwise write it in the conversation's language, by the principles of the `plain-language` skill.
 
