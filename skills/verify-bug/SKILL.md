@@ -36,7 +36,7 @@ Start one verifier per claim that needs a reproduction. Run them in parallel whe
 |---|---|
 | Behavior: a crash, wrong output, lost or corrupted data | A reproduction that drives the real code path with the trigger and asserts the symptom |
 | Concurrency or timing | The same, under controlled scheduling or repeated until the failure rate is high and stable |
-| Performance | One harness that measures both the baseline and the trigger |
+| Performance | A measurement of the baseline and the trigger by the `measure-performance` skill, with the project's own scenarios when it has them; it is red when the verdict is slower |
 | A fact about the code, such as "never called", "unreachable", or "not validated" | The search, and the code path with its paths and lines |
 | A rule violation | The rule's text and source, and the code that breaks it |
 | A design judgment, such as a finding from `deep-code-review` | Not reproducible. Check the facts it rests on, such as that the duplication exists or that the cited tests pin the behavior, and leave the judgment to the user |

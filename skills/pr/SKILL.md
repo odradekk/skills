@@ -42,7 +42,7 @@ The description is for reviewers, written in the notes language from the Agent w
 
 - **Why:** the problem in one or two sentences. The tracker's closing reference from the Tracker line, such as `Fixes #N`, for each ticket the pull request completes; the plain ticket reference for related ones; and the decision note ID when it implements a note.
 - **What changed:** the changes to behavior, interfaces, configuration, and stored data that a reviewer must know, grouped by area. The pull request already lists the commits; describe the change, not the commit list.
-- **Testing:** the commands that step 2 ran, with their results, and what no check covers.
+- **Testing:** the commands that step 2 ran, with their results, and what no check covers. A performance number is reported the way the `measure-performance` skill reports one: the primary number here, the rest linked.
 - **Notes for reviewers**, only when there is something to say: risks, where to start reading, follow-up work.
 
 Revise the description with the `plain-language` skill. It carries no AI attribution: no "Generated with" line, no session link, and no co-author line for an AI tool.

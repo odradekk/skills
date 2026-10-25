@@ -33,7 +33,7 @@ Done when the ranked hypotheses, each with its prediction, are shown.
 
 Each probe tests one prediction and changes one variable. Use a debugger or a REPL when the environment has one; otherwise add logs at the boundaries that tell the hypotheses apart, and only there. Tag every temporary log with one unique prefix, such as `[DEBUG-a4f2]`, so a single search finds them all at cleanup.
 
-For a performance regression, measure instead of logging: take a baseline with a timing harness, a profiler, or a query plan, then bisect.
+For a performance regression, measure instead of logging, by the `measure-performance` skill and with the project's own scenarios when it has them: find the limiter with a profiler or a query plan, then bisect.
 
 Done when one hypothesis's prediction held and the others' failed. When every prediction fails, return to step 2 with what the probes showed.
 
