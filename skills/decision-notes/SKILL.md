@@ -35,7 +35,7 @@ The **class** folder is the kind of decision, from this closed set:
 
 The date is the day the topic was first proposed; for an existing topic, take it from git history. The slug is lowercase kebab-case. Dates instead of sequence numbers let parallel branches add notes without collisions. Notes link to each other with relative Markdown links, which the verifier checks. The folder tree is the index; keep no separate index file.
 
-The filename without `.md` is the note's **ID**. It stays the same when the note moves between folders, so tickets and commits refer to the note by ID. A note lists none of its tickets, pull requests, or commits: they point to the note instead (see the `note-to-tickets` skill).
+The filename without `.md` is the note's **ID**. It stays the same when the note moves between folders, so tickets, commits, and code refer to the note by ID. A note lists none of its tickets, pull requests, or commits: they point to the note instead (see the `note-to-tickets` skill).
 
 ## When to write one
 
@@ -98,6 +98,20 @@ In the change that ships the work (with tickets, the change that closes the last
 
 When a change moves, renames, or alters something an implemented note names, such as a path, symbol, default, or mechanism, update the note in the same change. Find those notes by searching the notes directory for the names you changed. Rewrite stale facts in place so the note reads as current state, without a change history. Update facts only: reversing the decision itself takes a new note that supersedes the old one.
 
+## Cite notes from code
+
+Someone who opens a file sees the code, not the notes. When a note explains why some code has a shape that would look wrong or arbitrary without it, such as who owns a piece of state, an alternative that was rejected, or a compatibility promise, the documentation comment of the module or export with that shape cites the note on a line of its own:
+
+```
+Decision note: <ID>
+```
+
+The comment still states the local facts, such as what the code guarantees; the note carries the reasons. Cite an implemented note where its decision shapes the code, a rejected note where its idea would be tempting, and a proposed note on code that only part of the proposal has built. Code that a note merely mentions needs no citation. The marker stays in English whatever the notes language, because the verifier matches it.
+
+Before changing code that cites a note, read the note: a change that keeps the decision updates the note's facts, and a change that reverses it needs a new note that supersedes the old one.
+
+A citation by ID survives the note's moves between lifecycle folders. When a note is archived, folded into another, or deleted, update its citations in the same change: point them at the note that owns the decision now, or remove them. Find them by searching the repository for the ID.
+
 ## Reject a proposal
 
 Move the note to `rejected/<class>/` and set `Status: rejected — <reason>`. The body stays as it was proposed. Close the proposal's open tickets, if any, with the reason and the note ID.
@@ -112,7 +126,7 @@ Judge each note by its future value, never by length or age:
 - **Proposed** notes are never archived: reject an obsolete proposal instead.
 - **Keep a rejected note** only while its losing idea is still tempting and the note explains why it loses; otherwise delete it.
 
-**Fold** a fully superseded note into its new owner only after the owner carries every unique rationale, alternative, consequence, and verification from the old note; then delete the old note. After deleting any note, repair or remove every link to it (search for its filename).
+**Fold** a fully superseded note into its new owner only after the owner carries every unique rationale, alternative, consequence, and verification from the old note; then delete the old note. After deleting any note, repair or remove every link to it (search for its filename) and every citation of its ID in code.
 
 Calibration examples, from the DeepSeek Harness notes this workflow is adapted from. The word counts show that size is not the test:
 
@@ -128,7 +142,7 @@ When a case is borderline, state the outcome you chose and why in your report.
 
 1. Move the file from `implemented/<class>/` to `archived/<class>/` with `git mv`.
 2. Insert `Archived: YYYY-MM-DD`, using today's date, directly below the status line. The move and this line are the only edits.
-3. Repair links from active files: point them at the current authority, keep them pointing at the archived path only when they cite history on purpose, or delete them.
+3. Repair links from active files: point them at the current authority, keep them pointing at the archived path only when they cite history on purpose, or delete them. Citations of the note in code always move to the current authority or go: code that cites an archived note fails the verifier.
 4. On the first archive in a repository, write `archived/` to `<notes>/.rgignore`, so searches that pass through the notes directory skip frozen history. Search the archive by naming its directory explicitly.
 
 Once archived, a note is frozen: its content, links, and formatting stay exactly as archived, and it is history, never current authority. The verifier's `--base` check fails on any change to an archived note.
@@ -151,6 +165,6 @@ Run the verifier from this skill's directory, using `python3` where `python` is 
 python <this skill's directory>/scripts/verify_notes.py <notes-dir> --base <merge-base>
 ```
 
-`<merge-base>` is `git merge-base HEAD origin/<base branch>`; omit `--base` when there is no remote base. The verifier checks the folder layout and filenames, the header and its agreement with the folder, the required and disallowed sections, and the relative links in active notes. With `--base`, it also fails when an archived note that exists at the base was changed or removed. It exits 0 when clean.
+`<merge-base>` is `git merge-base HEAD origin/<base branch>`; omit `--base` when there is no remote base. The verifier checks the folder layout and filenames, the header and its agreement with the folder, the required and disallowed sections, and the relative links in active notes. Inside a git repository, it also checks every `Decision note: <ID>` citation in the files outside the notes directory that git tracks or does not ignore: the ID must name a note, and not an archived one. With `--base`, it also fails when an archived note that exists at the base was changed or removed. It exits 0 when clean.
 
 Done when the verifier exits 0 and every supersession match has an outcome. Report the notes you added, updated, moved, archived, and deleted.

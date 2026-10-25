@@ -33,7 +33,7 @@ Done when you have the complete list of paths the push will carry, with their ch
 
 Map every changed path to a row of the table, and fill in concrete targets: the test files that exercise the changed code (found through test naming, imports, or the test layout), the changed files for linters, the affected package for builds.
 
-- **Decision notes changed:** run the verifier of the `decision-notes` skill, which sits beside this skill (`../decision-notes/` from this skill's directory): `python <decision-notes directory>/scripts/verify_notes.py <notes-dir> --base <merge-base>`.
+- **Decision notes changed, or a citation of one did:** run the verifier of the `decision-notes` skill, which sits beside this skill (`../decision-notes/` from this skill's directory): `python <decision-notes directory>/scripts/verify_notes.py <notes-dir> --base <merge-base>`. A citation changed when `git diff --name-only -G "Decision note: " <merge-base> HEAD` lists any file, since it lists the files whose diff adds or removes a line with a `Decision note: <ID>` citation.
 - **Behavior change that no row covers:** run the narrowest existing test that exercises it. When no test exercises it, report the gap; write a test only when the task includes one.
 - **Manifests, lockfiles, toolchain, or CI configuration changed:** add the broader rows those files affect, such as the build.
 - **Already covered:** leave out a check that a hook runs at commit or push (the Hooks line), and a check that already passed in this session on the same content.

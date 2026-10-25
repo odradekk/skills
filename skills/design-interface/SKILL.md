@@ -114,7 +114,7 @@ Done when the contract covers every operation, and every open choice is decided 
 
 Write the data definitions as types, the purpose, effect, errors, and order into the documentation comment of each operation, and a stub for each operation: the real name and parameters, with a body that fails as not implemented and uses its parameters, such as in the error message, so the compiler's unused checks pass. Update the existing callers so the code compiles; until the `tdd` skill fills in the stubs, they fail at run time.
 
-When the design settles a lasting structural decision that no existing note or document records, such as a module boundary, the owner of a piece of state, or a port with its adapters, and the decision meets the conditions the `decision-notes` skill sets for an implemented note, record it with that skill in the same change as an `architecture` note, with the shapes that lost as its alternatives. It goes to review with the code.
+When the design settles a lasting structural decision that no existing note or document records, such as a module boundary, the owner of a piece of state, or a port with its adapters, and the decision meets the conditions the `decision-notes` skill sets for an implemented note, record it with that skill in the same change as an `architecture` note, with the shapes that lost as its alternatives, and cite it from the documentation comment of the module or export it shapes, as that skill describes. It goes to review with the code.
 
 Done when the code compiles or loads with the stubs in place, and the note is written where one is due.
 

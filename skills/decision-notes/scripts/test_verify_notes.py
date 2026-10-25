@@ -7,6 +7,8 @@ import unittest
 from pathlib import Path
 
 SCRIPT = Path(__file__).with_name("verify_notes.py")
+# Built at run time, so that this file holds no citation for the verifier to check where the skill is installed.
+CITE = "Decision" + " note: "
 
 PROPOSED = """\
 # Parse the policy once
@@ -120,6 +122,11 @@ class VerifyNotesTest(unittest.TestCase):
         path.write_text(text, encoding="utf-8")
         return path
 
+    def write_source(self, relative, text):
+        path = self.root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+
     def assert_problem(self, result, fragment):
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         self.assertIn(fragment, result.stdout)
@@ -183,6 +190,41 @@ class VerifyNotesTest(unittest.TestCase):
 
         self.assert_problem(result, "2025-12-01-old-storage-layout.md: archived note changed since HEAD")
         self.assertNotIn("newly-archived", result.stdout)
+
+    def test_code_may_cite_implemented_proposed_and_rejected_notes(self):
+        self.write("implemented/architecture/2026-01-01-event-sourced-sessions.md", IMPLEMENTED)
+        self.write("proposed/architecture/2026-01-02-parse-policy-once.md", PROPOSED)
+        self.write("rejected/simplification/2026-01-03-merge-compaction-packages.md", REJECTED)
+        self.write_source("src/log.ts", f"/**\n * The log is the only source of truth.\n * {CITE}2026-01-01-event-sourced-sessions\n */\n")
+        self.write_source("src/policy.py", f"# {CITE}2026-01-02-parse-policy-once\n# {CITE}2026-01-03-merge-compaction-packages\n")
+        git(self.root, "init", "-q")
+        git(self.root, "add", "src/log.ts")
+
+        result = run_verifier(self.notes)
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_code_citation_of_a_missing_note(self):
+        self.write("implemented/architecture/2026-01-01-event-sourced-sessions.md", IMPLEMENTED + f"\n{CITE}2026-01-09-gone\n")
+        self.write_source(".gitignore", "build/\n")
+        self.write_source("build/out.js", f"// {CITE}2026-01-09-gone\n")
+        self.write_source("src/new.ts", f"export const a = 1;\n// {CITE}2026-01-09-gone\n")
+        git(self.root, "init", "-q")
+
+        result = run_verifier(self.notes)
+
+        self.assert_problem(result, "src/new.ts:2: cites decision note '2026-01-09-gone', which does not exist")
+        self.assertNotIn("out.js", result.stdout)
+        self.assertNotIn("event-sourced-sessions.md", result.stdout)
+
+    def test_code_citation_of_an_archived_note(self):
+        self.write("archived/architecture/2025-12-01-old-storage-layout.md", ARCHIVED)
+        self.write_source("src/store.ts", f"// {CITE}2025-12-01-old-storage-layout\n")
+        git(self.root, "init", "-q")
+
+        result = run_verifier(self.notes)
+
+        self.assert_problem(result, "src/store.ts:1: cites archived decision note '2025-12-01-old-storage-layout'")
 
 
 if __name__ == "__main__":

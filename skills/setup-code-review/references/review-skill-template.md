@@ -63,6 +63,7 @@ Report these as suggestions; they do not block a merge.
 - The change meets the acceptance criteria of its ticket. A pull request that completes the ticket carries the tracker's closing reference, such as `Fixes #N`, in its description; work committed straight to `<base branch>` carries the ticket reference, or the closing reference in the completing commit, in its commit messages instead. Source: the Tracker line in `AGENTS.md`.
 - A change that closes the last open ticket of a decision note moves the note to `implemented/`. Source: the Tracker line in `AGENTS.md`.
 - A change to something an implemented decision note describes updates that note in the same change. Source: the Decision notes line in `AGENTS.md`.
+- A change to code that cites a decision note (`Decision note: <ID>`) keeps that note's decision, or comes with a new note that supersedes it; new code whose shape a note explains cites that note. Source: the `decision-notes` skill.
 - New or changed prose follows the `plain-language` skill. Source: the Prose line in `AGENTS.md`.
 
 ## Reporting

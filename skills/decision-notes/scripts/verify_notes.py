@@ -7,8 +7,11 @@ Checks the lifecycle/class/filename layout, each note's header and its
 agreement with the lifecycle folder, required and disallowed sections, and
 relative links in active notes. Archived notes get only the header check:
 they are frozen, so later format rules and their outbound links never apply.
-With --base, also reports archived notes that existed at REF and were changed
-or removed since. Exit status: 0 clean, 1 problems found, 2 usage or git error.
+Inside a git repository, also checks every "Decision note: <ID>" citation in
+the files outside the notes directory that git tracks or does not ignore: the
+ID must name a note, and not an archived one. With --base, also reports
+archived notes that existed at REF and were changed or removed since.
+Exit status: 0 clean, 1 problems found, 2 usage or git error.
 """
 
 from __future__ import annotations
@@ -39,6 +42,8 @@ HEADING = re.compile(r"## +(.+?)(?: +#+)? *")
 LINK = re.compile(r"\]\(\s*<?([^)\s>]+)>?")
 INLINE_CODE = re.compile(r"`+[^`]*`+")
 SCHEME = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*:")
+CITATION = re.compile(r"Decision note: (\d{4}-\d{2}-\d{2}-[a-z0-9]+(?:-[a-z0-9]+)*)")
+CITATION_LINE = r"Decision note: [0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9]"  # git grep's ERE prefilter for CITATION
 
 Problem = tuple[Path, "int | None", str]  # (path, line number or None, message)
 
@@ -168,6 +173,34 @@ def changed_archived_notes(notes_dir: Path, base: str) -> list[tuple[str, str]]:
     return changed
 
 
+def code_citations(notes_dir: Path) -> list[tuple[str, int, str]]:
+    """Return (repository path, line number, note ID) for each citation outside the notes directory.
+
+    Searches the files git tracks or does not ignore, so build output and
+    dependencies stay out. Returns nothing when notes_dir is not in a git repository.
+    """
+    located = subprocess.run(
+        ["git", "-C", str(notes_dir), "rev-parse", "--show-toplevel", "--show-prefix"],
+        capture_output=True, text=True, encoding="utf-8",
+    )
+    if located.returncode != 0:
+        return []
+    root, prefix = (located.stdout.splitlines() + [""])[:2]
+    pathspec = ["--", ".", f":(exclude){prefix.rstrip('/')}"] if prefix else ["--", "."]
+    result = subprocess.run(
+        ["git", "-c", "core.quotepath=false", "-C", root, "grep", "--untracked", "-I", "-n", "-z",
+         "-E", "-e", CITATION_LINE, *pathspec],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    if result.returncode > 1:
+        raise RuntimeError(result.stderr.strip())
+    citations = []
+    for line in result.stdout.splitlines():
+        path, number, text = line.split("\0", 2)
+        citations += [(path, int(number), match.group(1)) for match in CITATION.finditer(text)]
+    return citations
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Check a decision-notes directory.")
     parser.add_argument("notes_dir", type=Path, help="the decision-notes directory, such as .agents/notes")
@@ -190,6 +223,20 @@ def main(argv: list[str] | None = None) -> int:
             found += check_sections(lines, lifecycle) + check_links(path, lines)
         problems += [(path, line, message) for line, message in found]
 
+    lifecycle_of = {path.stem: lifecycle for path, lifecycle in notes}
+    try:
+        citations = code_citations(args.notes_dir)
+    except RuntimeError as error:
+        print(f"error: git grep for citations failed: {error}", file=sys.stderr)
+        return 2
+    for path, line, note_id in citations:
+        lifecycle = lifecycle_of.get(note_id)
+        if lifecycle is None:
+            problems.append((Path(path), line, f"cites decision note '{note_id}', which does not exist"))
+        elif lifecycle == "archived":
+            problems.append((Path(path), line, f"cites archived decision note '{note_id}'; "
+                             "cite the note that owns the decision now, or remove the citation"))
+
     if args.base:
         try:
             changed = changed_archived_notes(args.notes_dir, args.base)
@@ -203,7 +250,7 @@ def main(argv: list[str] | None = None) -> int:
     for path, line, message in problems:
         location = path.as_posix() if line is None else f"{path.as_posix()}:{line}"
         print(f"{location}: {message}")
-    print(f"{len(notes)} notes checked, {len(problems)} problems")
+    print(f"{len(notes)} notes and {len(citations)} citations in code checked, {len(problems)} problems")
     return 1 if problems else 0
 
 
