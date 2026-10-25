@@ -67,7 +67,7 @@ Report these as suggestions; they do not block a merge.
 
 ## Reporting
 
-For each finding, state the defect, its location, its impact, and the evidence. List blocking findings before suggestions, then the checks you ran with their results. On a pull request, put a finding about one spot on that line of the diff, and a finding about the whole change on the pull request; without a pull request, give the file and line in the report. When you receive a review, check each claim before acting on it, then fix it or explain why not.
+For each finding, state the check it comes from, if any, the defect, its location, its impact, and the evidence. List blocking findings before suggestions, then the checks you ran with their results. On a pull request, put a finding about one spot on that line of the diff, and a finding about the whole change on the pull request; without a pull request, give the file and line in the report. When you receive a review, verify its findings with the `verify-bug` skill before acting on them; fix the ones that hold, and give the evidence for the rest.
 
 Sources checked up to commit `<sha>` (<YYYY-MM-DD>).
 ````

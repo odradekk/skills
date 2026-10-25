@@ -76,6 +76,6 @@ Mark where each finding belongs:
 
 End with a verdict. The change meets the bar when it has no structural regression, no visible missed restructuring that would remove a meaningful part of it, no file pushed past the size limit without a stated reason, no new scattered special cases, and no indirection or contract churn that hides the design.
 
-When reviewers ran as sub-agents, pass their findings on as reported. Check factual claims, such as whether a line exists; where you disagree with a judgment, add your reasons beside the finding instead of removing it. Write the report in the notes language from the Agent workflow section, by the principles of the `plain-language` skill.
+When reviewers ran as sub-agents, pass their findings on as reported. Check the facts each finding rests on the way the `verify-bug` skill checks a design judgment, such as whether a line exists, the logic is really duplicated, or the cited tests pin the behavior; where you disagree with a judgment, add your reasons beside the finding instead of removing it. Write the report in the notes language from the Agent workflow section, by the principles of the `plain-language` skill.
 
 Done when every finding has its location, evidence, and destination, and the verdict is stated.
