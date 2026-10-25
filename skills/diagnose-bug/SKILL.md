@@ -43,7 +43,7 @@ The regression test needs a correct seam: a place where the test exercises the b
 
 With a correct seam:
 
-1. Turn the shrunk reproduction into a test at that seam.
+1. Turn the shrunk reproduction into a test at that seam, by the rules for a test in the `tdd` skill.
 2. Watch it fail.
 3. Fix the code.
 4. Watch it pass.

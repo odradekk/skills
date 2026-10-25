@@ -45,7 +45,7 @@ Apply a candidate when all of these hold:
 - **It has proof.**
   - A removal deletes a declaration that nothing uses, such as a parameter, an export, a field, a function, a file, an asset, or a dependency. The search that finds no consumer and checks that still pass prove it.
   - Every other candidate changes which statements run, such as deleting a branch or a check, or replacing code with a simpler form or an existing helper. The tests that run the replaced code prove it. Two kinds need no test: a change to types only, which the type check proves, and a literal replaced by a named constant of the same value, which the constant's definition proves.
-  - When no test runs the replaced code, skip the candidate, and report the test it needs and the seam where that test belongs. Writing the test belongs to the work that wrote the code.
+  - When no test runs the replaced code, skip the candidate, and report the test it needs and the seam where that test belongs. Writing the test belongs to the work that wrote the code, through the `tdd` skill.
 - **It stays inside the scope:** it edits the files of the change, or deletes what the change left unused; with a named scope, only the files in it. A candidate that needs more goes back to whoever named the scope.
 - **Nothing outside requires it.** Search the active decision notes and the design documents of the intent for its name, and keep it when an implemented note or the current design requires it. Keep anything others may use without the repository showing it: an export of a package others install, a documented API, a plugin or extension point, a configuration key users set, or a stored or wire format.
 
