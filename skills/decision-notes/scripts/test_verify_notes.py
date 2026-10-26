@@ -268,12 +268,12 @@ class VerifyNotesTest(unittest.TestCase):
         self.write("accepted/architecture/2026-01-01-event-sourced-sessions.md", ACCEPTED)
         self.write_source(".gitignore", "build/\n")
         self.write_source("build/out.js", f"// {CITE}2026-01-09-gone\n")
-        self.write_source("src/new.ts", f"export const a = 1;\n// {CITE}2026-01-09-gone\n")
+        self.write_source("src/added.ts", f"export const a = 1;\n// {CITE}2026-01-09-gone\n")
         git(self.root, "init", "-q")
 
         result = run_verifier(self.notes)
 
-        self.assert_problem(result, "src/new.ts:2: cites decision note '2026-01-09-gone', which does not exist")
+        self.assert_problem(result, "src/added.ts:2: cites decision note '2026-01-09-gone', which does not exist")
         self.assertNotIn("out.js", result.stdout)
 
 
