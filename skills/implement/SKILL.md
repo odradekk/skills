@@ -1,6 +1,6 @@
 ---
 name: implement
-description: 'Carry one ticket, accepted decision note, or request to reviewed code without stopping: design-interface and tdd, diagnose-bug, or refactor, then simplify-change and the repository''s own review. Use when the user asks to implement a ticket, a decision note, a feature, or a fix.'
+description: 'Carry one ticket, accepted decision note, or request to reviewed code without stopping: design-interface, design-ui, and tdd, diagnose-bug, or refactor, then simplify-change and the repository''s own review. Use when the user asks to implement a ticket, a decision note, a feature, or a fix.'
 ---
 
 # Implement
@@ -28,13 +28,15 @@ Done when you have the intent with its acceptance criteria, its kind, the starti
 For new or changed behavior:
 
 1. When the work adds or changes an interface, run the `design-interface` skill with the intent. When it reports that the design cannot go on, stop: the report says what blocks it.
-2. Run the `tdd` skill with the contract, from `design-interface` or from the existing interface, and the intent.
+2. When the work adds or changes a user interface, run steps 1 to 6 of the `design-ui` skill with the intent.
+3. Run the `tdd` skill with the contract, from `design-interface` or from the existing interface, the cases the UI contract hands to tests, and the intent.
+4. When `design-ui` ran, run its step 7 on the built interface.
 
 For a defect, run the `diagnose-bug` skill on the report. It verifies the defect through `verify-bug`, finds the cause, and fixes it behind a regression test. When the verdict is anything but "holds", stop and report the verdict with its evidence.
 
 For a change of structure only, run the `refactor` skill with the intent. When it reports that the target makes nothing disappear, or reverts the restructuring, stop: its report says why.
 
-Done when the build reports that every case passed after failing first, that the defect's red command passes with its regression test, or that the refactor passes its pin with something gone.
+Done when the build reports that every case passed after failing first, and `design-ui`, when it ran, that every check of the built interface passed or is listed as not checked; that the defect's red command passes with its regression test; or that the refactor passes its pin with something gone.
 
 ## 3. Simplify it
 
@@ -83,7 +85,7 @@ Done when the checks pass or each failure is shown to exist at the merge base, a
 Report:
 
 - the intent, the ticket or note, and the branch;
-- the design: the chosen shape, its assumptions, and its follow-ups, or that the work used an existing interface;
+- the design: the chosen shape, its assumptions, and its follow-ups, or that the work used an existing interface; and for a user interface, the main tasks with their step counts, each view's focus, the device matrix, and what was not checked;
 - the tests: the test list in brief, the injected errors no test caught, the manual checks not made with what to look at, and the coverage of the change or that the project has no coverage tool;
 - the simplifications applied, and those skipped, with the reasons;
 - the review: each finding with its verdict and outcome, and the number of rounds, or that the repository has no review skill;
