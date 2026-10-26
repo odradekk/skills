@@ -1,11 +1,11 @@
 ---
 name: commit
-description: Commit the current changes as Conventional Commits grouped by intent, without asking for confirmation, and report what was committed. Use when the user asks to commit, or to split uncommitted work into separate commits, and when another skill needs a commit made.
+description: Commit the working tree as Conventional Commits grouped by intent, without asking for confirmation. Use when the user asks to commit, or to split uncommitted work into commits.
 ---
 
 # Commit
 
-The user's request to commit is the approval: choose the scope, group it, write the messages, commit, and report. Questions are replaced by the rules below; work stops only in the cases under [Stop](#stop).
+The user's request to commit is the approval: choose the scope, group it, write the messages, commit, and report. Questions are replaced by the rules below; work stops only in the cases this skill names.
 
 ## 1. Read the state
 
@@ -43,7 +43,7 @@ Give each group a Conventional Commits type: `feat`, `fix`, `refactor`, `perf`, 
 - **Subject:** `<type>(<scope>): <summary>`, in the format and language of the repository's recent subjects, such as `feat(story): 接入阿莎姬的羁绊剧情`. Without a history to follow, use the notes language from the `## Agent workflow` section, or English. Imperative, at most 72 characters, no final period.
 - **Body:** only when the subject cannot carry why the change was made or what a reader must know; wrap it at about 72 characters. Write it by the principles of the `plain-language` skill.
 - **Ticket references:** only for work committed straight to the base branch, which has no pull request to carry them: the ticket reference from the Tracker line, such as `Refs #N`, or its closing reference, such as `Fixes #N`, in the commit that completes the ticket. On any other branch, the pull request carries them.
-- **No AI attribution:** no co-author trailer for an AI tool, no "Generated with" line, no session link. A commit-msg hook may remove them too; write the message without them.
+- **No AI attribution:** write the message without a co-author trailer for an AI tool, a "Generated with" line, or a session link, even where a commit-msg hook would remove them.
 
 ## 5. Commit each group
 
@@ -57,4 +57,4 @@ Done when every file in scope is committed, or listed as left out with the reaso
 
 ## 6. Report
 
-List each commit with its short hash and subject, the files left out and why, and the changes that remain uncommitted. Committing does not push; pushing belongs to the `pr` skill or to the user's request.
+List each commit with its short hash and subject, the files left out and why, and the changes that remain uncommitted. Leave pushing to the `pr` skill or to the user's request.

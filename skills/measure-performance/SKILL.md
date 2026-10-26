@@ -1,11 +1,11 @@
 ---
 name: measure-performance
-description: Make a performance number trustworthy before anyone reports or acts on it, by planning the measurement, finding what limits the result, confirming the work really ran, and reporting the runs and their spread. Use when you run a benchmark, measure a speedup, a regression, latency, throughput, or memory, or cite such a number in a review or pull request.
+description: 'Make a performance number trustworthy: plan the measurement, find what limits it, confirm the work ran, and report the runs and their spread. Use when running a benchmark, measuring a speedup, a regression, latency, throughput, or memory, or citing such a number.'
 ---
 
 # Measure performance
 
-A performance number means something only when you know what it measured, what limits it, and how much it varies between runs. This skill holds every number to that standard, whether it comes from an optimization, a bug report, a review, or a pull request. When the repository has its own performance skill, a skill in its skill directory whose name ends in `-performance` other than `measure-performance` and `setup-performance`, take the scenarios and commands from it; the checks below apply to every number they produce.
+A performance number means something only when you know what it measured, what limits it, and how much it varies between runs. This skill holds every number to that standard. When the repository has its own performance skill, a skill in its skill directory whose name ends in `-performance` other than `measure-performance` and `setup-performance`, take the scenarios and commands from it; the checks below apply to every number they produce.
 
 ## 1. Plan the measurement
 
@@ -14,7 +14,7 @@ Before running anything, write down the claim you expect to make, in the words y
 | Field | What to decide |
 |---|---|
 | User operation | The action a user waits on, and the observable point at which it is complete |
-| Workload | Its dimensions and values, for typical and for heavy use, built from fixed constants or a seed |
+| Workload | Its dimensions and values, for typical and for heavy use, and its data, by the data rule below |
 | Entry path | The production code and the build that ships, and which external boundaries are stubbed |
 | Clock | Where timing starts and stops, cold or warm, and what is excluded, such as network latency |
 | Memory | The counter and the process, such as the language heap, the process's private memory, or GPU memory; retained, with the intended objects still reachable, or peak, measured apart |

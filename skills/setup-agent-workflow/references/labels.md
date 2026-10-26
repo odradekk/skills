@@ -11,7 +11,7 @@ Names are lowercase kebab-case after the prefix. All kinds share one color and a
 
 ## Detect, for step 2
 
-List the labels the tracker has now, with how many issues use each, through the tool the Tracker line names. For example, with `gh`:
+List the labels the tracker has now, with how many issues use each, through the tracker's tool. For example, with `gh`:
 
 ```sh
 gh label list --limit 200 --json name,description

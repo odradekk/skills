@@ -1,15 +1,15 @@
 ---
 name: plain-language
-description: Revise writing so it reads the way an experienced colleague talks, with a clear main point and line of reasoning, nothing redundant or off the point, established terms instead of coined ones, and no unexplained abbreviations, working labels, literal translations, verbal tics, or filler. Use when writing or revising documents, decision notes, tickets, pull request descriptions, commit bodies, or a report to the user, and when the user objects to a wording.
+description: 'Revise writing for people so it reads the way an experienced colleague talks: the main point first, nothing redundant, established terms, and no unexplained labels or literal translations. Use when writing or revising documents, notes, tickets, pull request descriptions, commit bodies, or reports, and when the user objects to a wording.'
 ---
 
 # Plain language
 
-A reader should get the main point on the first reading, follow the reasoning without gaps, and meet only words the reader already uses. More text is not better: every redundant or unrelated passage buries the point and costs the reader time.
+A reader should get the main point on the first reading, follow the reasoning without gaps, meet only words the reader already uses, and find no passage that is redundant or off the point: more text is not better.
 
 Creative writing, such as fiction, game dialogue and scripts, and setting or lore documents, is outside this skill: its wording is part of the content, and it follows the project's own writing guides.
 
-This skill is the revision pass. Write the draft from the principles in [core.md](core.md), which also belong in every agent's always-loaded instructions, then revise it here: the whole text first, then its sentences. Models fall back into the same habits while drafting, so the checking happens after the draft exists.
+This skill is the revision pass. Write the draft from the principles in [core.md](core.md), then revise it here. Models fall back into the same habits while drafting, so the checking happens after the draft exists.
 
 ## Protected text
 
@@ -22,7 +22,7 @@ Leave these exactly as they are:
 
 ## Whole text
 
-Apply these tests to the text as a whole before working on sentences; a sentence you are about to cut needs no polishing.
+These tests come before the sentence tests: a sentence you are about to cut needs no polishing.
 
 1. **Main point.** Can you state the text's main point in one sentence? Put it first, or answer the reader's question first. If you cannot state it, settle what the point is before revising anything else.
 2. **Line of reasoning.** Does every paragraph follow from the main point or from the paragraph before it, so the reader knows why it comes next? Add the missing link, reorder, or move the passage to where it connects. A jump between topics without a stated link is a gap, even when each part is correct.
@@ -31,8 +31,6 @@ Apply these tests to the text as a whole before working on sentences; a sentence
 5. **Proportion.** Does space follow importance? The main point and what the reader must act on get the most room; background and caveats stay short.
 
 ## Sentences
-
-Apply every test to every remaining sentence. Each test says what to change when a sentence fails it.
 
 1. **Coined term.** Did you give this thing its name during the work? Replace the name with a plain description, or with the field's established term.
 2. **Borrowed term.** Would a practitioner of this field say this word? A word borrowed from another field, such as law, medicine, or the military, or a metaphor posing as a technical noun, becomes the plain word.
@@ -46,24 +44,15 @@ Apply every test to every remaining sentence. Each test says what to change when
 10. **Format.** Does each heading, bold phrase, list, or table help this reader find or compare something? Turn the rest into prose.
 11. **Spoken test.** Would an experienced colleague say this sentence in a face-to-face conversation? If not, rewrite it the way they would say it.
 
-## Language references
-
-The patterns that fail these tests most often, each with an example and a rewrite:
-
-- Chinese text: [references/zh.md](references/zh.md)
-- English text: [references/en.md](references/en.md)
-
-Read the reference for the language of the draft before revising; read both for mixed text.
-
 ## Revise
 
 1. Mark the protected text.
-2. Read the language reference.
+2. Read the reference for the draft's language, which lists the patterns that fail these tests most often, each with an example and a rewrite: [references/zh.md](references/zh.md) for Chinese, [references/en.md](references/en.md) for English, both for mixed text.
 3. Apply the whole-text tests: settle the main point, then reorder, link, and cut.
 4. Apply every sentence test to every remaining sentence and rewrite what fails. A sentence rewrite keeps every claim, number, and condition the sentence carries; content leaves the text only through the whole-text tests.
 5. Apply the house style from the `Prose` line of the repository's `## Agent workflow` section, if it has one. House style takes precedence over the defaults in the language references.
 
-Done when the text passes the whole-text tests, every sentence passes every sentence test, and the protected text is unchanged.
+Done when the text passes the whole-text tests, every sentence passes every sentence test, the house style is applied, and the protected text is unchanged.
 
 ## New-reader check
 
@@ -80,4 +69,4 @@ Done when the reader's main point matches yours and every listed item is fixed o
 
 ## Record the user's corrections
 
-When the user objects to a wording, fix it, then record the case in the matching language reference: the pattern, the observed example, and the rewrite, under the category it belongs to. When the pattern is already listed, add the example to it. Make the change in this skill's source repository (https://github.com/odradekk/skills), because a sync replaces installed copies. When you are not working in that repository, give the user the case to add.
+When the user objects to a wording, fix it, then record the pattern, the observed example, and the rewrite under its category in the matching language reference, or add the example to the pattern when it is already listed. Make the change in this skill's source repository (https://github.com/odradekk/skills), because a sync replaces installed copies. When you are not working in that repository, give the user the case to add.

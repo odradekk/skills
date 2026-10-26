@@ -1,11 +1,11 @@
 ---
 name: visualize
-description: Show structure, flow, state, change, or data as a figure instead of prose, either as a small text diagram in the reply or as a self-contained HTML page written to a temporary directory. Use when something is easier to see than to read, when the user asks for a diagram or a visual explanation, and when another skill needs a figure.
+description: 'Show structure, flow, state, change, or data as a figure: a small text diagram in the reply, or a self-contained HTML page in a temporary directory. Use when something is easier to see than to read, or when the user asks for a diagram.'
 ---
 
 # Visualize
 
-Choose the smallest figure that makes the point, put it next to the sentence it supports, and keep only the parts that answer the current question: the calls, files, states, and boundaries that matter here, nothing else.
+Choose the smallest figure that makes the point, put it next to the sentence it supports, and keep only the parts that answer the current question: the calls, files, states, and boundaries that matter here.
 
 ## Choose the form
 
@@ -43,6 +43,8 @@ A change to a file tree:
  └── pr/
 ```
 
+Show a whole block instead of a diff when most of it is new, or when the reader needs the complete target shape to copy.
+
 A sequence diagram:
 
 ```mermaid
@@ -53,8 +55,6 @@ sequenceDiagram
     Tracker-->>Agent: ticket number
     Agent->>Tracker: read blockedBy back
 ```
-
-Show a whole block instead of a diff when most of it is new, or when the reader needs the complete target shape to copy.
 
 ## In the reply
 

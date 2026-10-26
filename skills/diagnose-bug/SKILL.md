@@ -1,6 +1,6 @@
 ---
 name: diagnose-bug
-description: Find the cause of a bug or performance regression and fix it with a regression test, starting from a reproduction that goes red. Use when the user asks to debug or diagnose something, or reports something broken, failing, or slow.
+description: Find the cause of a bug or performance regression from a reproduction that goes red, and fix it behind a regression test. Use when the user asks to debug or diagnose something, or reports something broken, failing, or slow.
 ---
 
 # Diagnose bug
@@ -21,7 +21,7 @@ Done when the command runs in seconds and still meets every condition of red in 
 
 ## 2. Hypothesize
 
-Read the decision notes that touch the code in question. An accepted note may explain why the code works the way it does, and a fix that goes against one must say so.
+Read the decision notes that touch the code in question: an accepted note may explain why the code works the way it does.
 
 When the bug appeared between two known states, such as two commits, two dependency versions, or two data sets, bisect with the red command first, for example with `git bisect run`. The first bad state narrows every hypothesis.
 

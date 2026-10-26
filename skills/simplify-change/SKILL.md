@@ -1,6 +1,6 @@
 ---
 name: simplify-change
-description: Remove what a change makes the project maintain without needing it, such as parameters nothing passes, fallbacks for cases that cannot occur, copies of code the project already has, and code the change left unused, while its tests show that behavior stays the same. Use after implementing a change and before its review, when the user asks to clean up or simplify a change, and when another skill needs a change simplified.
+description: Remove what a change makes the project maintain without needing it, such as unused parameters, fallbacks for cases that cannot occur, copies of existing code, and code it left unused, with its tests showing behavior stays the same. Use after implementing a change and before its review, and when asked to clean up or simplify a change.
 ---
 
 # Simplify change
@@ -39,7 +39,9 @@ Done when every file in the change has been checked against every question.
 
 ## 3. Decide each candidate
 
-Apply a candidate when all of these hold:
+Drop a candidate that only renames or moves code, or that merges two things meaning different things into one: the reader holds as many concepts as before. List the dropped candidates from a sub-agent with the reason.
+
+Apply any other candidate when all of these hold:
 
 - **The behavior stays the same** for every input the code can receive: the output, the errors, and the side effects.
 - **It has proof.**
@@ -57,15 +59,13 @@ Otherwise the candidate goes to the report:
 
 Decide candidates that affect each other together. When applying one would block another, such as removing a parameter that a skipped candidate would pass, judge them by the result of both, and report them together.
 
-Drop a candidate that only renames or moves code, or that merges two things meaning different things into one: the reader holds as many concepts as before. List the dropped candidates from a sub-agent with the reason.
-
 ## 4. Apply
 
-Apply the accepted candidates, and update what names the removed code: comments, docs, and tests. Decision notes stay as they are; this skill changes no note.
+Apply the accepted candidates, and update what names the removed code: comments, docs, and tests. Decision notes stay as they are.
 
 Then run the automated checks from step 1 again, adding the narrowest checks for every file you touched, and the manual checks that the table names for what the applied candidates touch: open the pages they reach directly and watch the console. List as not checked a page that needs a particular state to reach, or that writes data the user keeps, such as a save. When a check fails, find the candidate that broke it, reapplying them one at a time if it is not obvious, revert that candidate completely, and move it to the report.
 
-Commit nothing. When the change is still uncommitted, whoever commits it commits the simplifications with it; when it is already committed, the simplifications stay uncommitted for whoever asked, to commit on their own.
+Leave the simplifications uncommitted. When the change is still uncommitted, whoever commits it commits them with it; when it is already committed, whoever asked commits them on their own.
 
 Done when every accepted candidate is applied with passing checks, or reverted and reported.
 

@@ -1,6 +1,6 @@
 ---
 name: design-interface
-description: Design an interface before its code, starting from what callers need, comparing structurally different designs when the interface is new and public, defining its data and operations, screening for flaws that mislead the next contributor, and writing the contract that the tests are derived from. Use when work adds or changes an interface, such as a new module, a public function or type, or a change that crosses modules, and when another skill needs an interface settled.
+description: 'Design an interface before its code: the callers'' needs, compared shapes, data definitions and operations, a screen for flaws, and the contract the tests come from. Use when work adds or changes an interface, such as a new module, a public function or type, or a change that crosses modules.'
 ---
 
 # Design interface
@@ -11,7 +11,7 @@ Two words keep their meaning throughout. A **seam** is where a module's interfac
 
 A change that uses an existing interface as it is skips this skill: the existing interface, its documentation, and its tests are the contract.
 
-The skill runs without stopping for anyone, so that it can be one step of a longer workflow. It decides what the intent leaves open by the rules in step 6, and records every choice in its report, where the caller and the review that follows can see it. It writes no decision note: the design refines a decision that planning already made, and what it finds undecided goes into its report as an open decision. When a planning skill runs it to compare shapes, that skill records the result in its proposal.
+The skill runs without stopping for anyone, so that it can be one step of a longer workflow. It decides what the intent leaves open by the rules in step 6, and records every choice in its report. It writes no decision note: the design refines a decision that planning already made, and what it finds undecided goes into its report as an open decision. When a planning skill runs it to compare shapes, that skill records the result in its proposal.
 
 ## 1. Ground the design
 
@@ -23,7 +23,7 @@ The skill runs without stopping for anyone, so that it can be one step of a long
   - **Owned, across a process or the network:** a service the project owns. The module takes it through a port, an interface the project defines, with a production adapter and an in-memory adapter for tests.
   - **Third party:** a service the project does not control. The module takes it through a port, and tests use a fake adapter.
 
-A port with only one adapter is a guess about the future, not a seam: add one only when production and tests both need an adapter.
+Add a port only when production and tests both need an adapter: a port with only one adapter is a guess about the future, not a seam.
 
 Done when you can name the code the interface connects to, the constraints, the conventions to follow, and each dependency's category.
 
@@ -37,12 +37,10 @@ Done when the needs cover the main ways the intent says the interface will be us
 
 Outline the data each operation takes and returns, and the operations themselves, with the call sites this shape gives the callers. Prefer the shape in which data structures carry the decisions: trace each common access through the structure, and when the answer is "a map or a cache can be added later", the structure is wrong.
 
-For a new public interface, or one that crosses modules, compare at least two structurally different shapes before choosing; the first idea is rarely the best. How much work that takes depends on the interface:
+For a new public interface, or one that crosses modules, compare at least two structurally different shapes before choosing; the first idea is rarely the best. Two shapes with the same structure, such as the same functions with different names, count as one. How much work the comparison takes depends on the interface:
 
 - **A new module, or an interface with state, dependencies, or several operations:** when your tools can start sub-agents, give the alternatives to fresh ones running in parallel, each with a different constraint: the smallest interface, with one to three entry points that each do as much as they can; the most common call made trivial; and, when a dependency crosses a process or the network, the design built around ports and adapters. Give each the intent, the grounding from step 1, and the needs from step 2, and tell it that existing signatures may change. Each returns its interface, its call sites, what it hides, how it handles dependencies, and its trade-offs. Without sub-agents, write the alternatives yourself, one after another, leaving each one unchanged once written.
 - **A single function without dependencies:** write two or three alternatives yourself, a line or two each.
-
-Two alternatives with the same structure, such as the same functions with different names, count as one.
 
 Compare the shapes by:
 
@@ -109,9 +107,9 @@ The contract is what the `tdd` skill turns into tests. List, for each operation:
 
 When the intent leaves a choice open, such as the wording of a message or what happens at a limit it does not mention, decide it without asking. Prefer, in this order, the existing behavior, the smaller interface, and the way the project already does the same thing, and record the choice as an assumption.
 
-A choice that is hard to reverse, such as a stored format or a compatibility promise, is not decided here when no accepted note settles it: it is an open decision for planning. When the design cannot go on, because of such a choice, because the intent contradicts itself or an accepted decision, or because it lacks information that no default supplies, write no code. End with the report of step 8, saying what blocks the design, for the caller to resolve.
+A choice that is hard to reverse, such as a stored format or a compatibility promise, is an open decision for planning unless an accepted note settles it. When the design cannot go on, because of such a choice, because the intent contradicts itself or an accepted decision, or because it lacks information that no default supplies, skip step 7 and go to the report of step 8, saying what blocks the design, for the caller to resolve.
 
-Done when the contract covers every operation, and every open choice is decided and recorded.
+Done when the contract covers every operation, and every open choice is decided and recorded as an assumption, or recorded as an open decision.
 
 ## 7. Write the design into the code
 
@@ -131,6 +129,6 @@ Done when the report covers every product of steps 3 to 7.
 
 ## 9. Keep the design honest
 
-The implementation fills in the stubs against the contract. A deviation, such as a parameter the design did not foresee, is a signal, not friction to absorb silently: decide whether the design was wrong, a requirement was missed, or the implementation is doing too much, and say which.
+The implementation fills in the stubs against the contract. Treat a deviation, such as a parameter the design did not foresee, as a signal: decide whether the design was wrong, a requirement was missed, or the implementation is doing too much, and say which.
 
 When the same kind of friction keeps appearing, return to step 3 with what the implementation showed, and design again, smaller, instead of patching. The signs are a pattern, not one case: the same workaround in unrelated places; special cases for unrelated edge cases; casts, or optional fields that are always set, needed to compile; a lock for state the design said was not shared; callers that must know the module's internal rules. A few edge cases do not condemn a design, and complexity in the data is not complexity in the design.

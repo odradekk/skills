@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Build behavior test-first against a settled interface, with a test list derived from the contract, one test at a time seen to fail because the behavior is missing and then made to pass, and completion only when every contract item has a test, the changed code is covered, and errors injected into its boundaries and fixed numbers make a test fail. Use when implementing a feature or a change of behavior, when the user asks for TDD or test-first work, and when another skill needs tests written; its rules for a test apply to every test the other skills write.
+description: 'Build behavior test-first from a contract: a test list derived from it, each test seen failing and then passing, and checks that the tests catch wrong code. Its rules for a test apply to every test any skill writes. Use when implementing a feature or a change of behavior, and when the user asks for TDD or test-first work.'
 ---
 
 # TDD
@@ -15,7 +15,7 @@ The skill runs without stopping for anyone, so that it can be one step of a long
 
 Read the repository's `## Agent workflow` section: Decision notes, and the check table with its test commands. If the section is missing, find the test commands in the manifests for this run only, and say so in the report.
 
-- **The contract:** the one the `design-interface` skill wrote, when the work adds or changes an interface. Otherwise the existing interface: its types, its documentation, and its tests, together with the intent, such as the ticket, the acceptance criteria of a decision note, or the request. When the work needs an interface that does not exist yet or must change, run `design-interface` first.
+- **The contract:** when the work adds or changes an interface, the one the `design-interface` skill wrote; run `design-interface` first when it has not run. Otherwise the existing interface: its types, its documentation, and its tests, together with the intent, such as the ticket, the acceptance criteria of a decision note, or the request.
 - **The project's testing rules:** the accepted decision notes of class `testing` that touch the area, and the testing documents the repository's `AGENTS.md` files point to. They are constraints on the test tier, the seam, the stand-ins, and the tools: a case they require, such as a snapshot or a browser test, goes on the test list, and a conflict between them and the work goes to the report.
 - **The existing tests** at the seams the work touches: where they live, how they are named, which fixtures and data builders they use, and which behavior they already cover. Follow the conventions of a test that meets the rules in step 3, not merely of the nearest one.
 - **The checks:** run the narrowest automated checks for the area now. They must pass, so that each failing test afterwards fails because of the new test. A check that the table describes as a manual procedure, such as opening a page, runs for the manual cases in step 4.
@@ -32,7 +32,7 @@ Turn the contract into a list of cases. Each case is one behavior a caller can o
 - **Each piece of tunable data the code reads,** such as thresholds in a content or configuration file: the rule applied to the data, with cases built from the data itself, such as each entry's threshold and the value just below it, which the test reads as input. The data's invariants, such as ascending order, get a case in the project's check of its content. Data moved from one place to another gets one comparison of the old values with the new.
 - **Each promised error, each required order of calls, and each effect:** a case that triggers it, checking the effect through the interface.
 - **Each state transition:** the transition, and each transition the interface refuses.
-- **Each requirement or acceptance criterion** of the intent: at least one case. A requirement without a case is a gap in the list.
+- **Each requirement or acceptance criterion** of the intent: at least one case.
 
 A requirement the project cannot test automatically is still a case, marked as one of two kinds: a **manual check**, such as text on a page in a project without interface tests, or a **structural check**, such as a search showing that something no longer exists in a directory.
 
@@ -68,9 +68,9 @@ For each automated case on the list, in order:
 3. Write the least code behind the interface that makes it pass. Code for a case that is not on the list waits until the case is added to the list.
 4. Run it together with the tests before it; all of them pass.
 
-For a manual check, look at the behavior before the change, where the old behavior plays the part of the failure, and again after it. A manual check you cannot make yourself, such as one that needs a device or a browser you do not have, is listed as not checked, with what to look at, and the loop goes on. For a structural check, run the search before the change, when it finds what is to go, and after, when it finds nothing. A check of shipped content passes at once, since the content starts out right; step 5 proves it by injecting a violation into the content.
-
 Once a test has failed because the behavior was missing, the code changes to meet it, never the other way round. Change an expected value only when working the case out by hand again gives the new value, and record why. Weaken no assertion, and skip or delete no test, to reach green.
+
+For a manual check, look at the behavior before the change, where the old behavior plays the part of the failure, and again after it. A manual check you cannot make yourself, such as one that needs a device or a browser you do not have, is listed as not checked, with what to look at, and the loop goes on. For a structural check, run the search before the change, when it finds what is to go, and after, when it finds nothing. A check of shipped content passes at once, since the content starts out right; step 5 proves it by injecting a violation into the content.
 
 When the implementation keeps meeting the same kind of friction, stop and return to the `design-interface` skill, as its last step describes.
 
@@ -81,7 +81,7 @@ Done when every automated case has passed after failing because the behavior was
 Passing tests do not yet show that they would catch a wrong implementation. Make these checks:
 
 1. **Trace both ways.** Every contract item has a case, and every test belongs to a case on the list. A test without a contract item is removed, or the contract item it reveals is added to the list, with the reason.
-2. **Cover the change.** When the check table or the test runner provides coverage, run the tests with it: every changed production line and branch is run by a test. A line that no test runs is code nothing asked for, which you remove; a missing case, which you add; or an exception, such as code that connects to the UI and is checked by hand, which the report names with its reason. Without a coverage tool, say so in the report, and propose adding one as a coverage command in the check table. Install nothing: choosing a test dependency is a `testing` decision, so it goes to the report as an open decision for planning, where the user may make it a proposal.
+2. **Cover the change.** When the check table or the test runner provides coverage, run the tests with it: every changed production line and branch is run by a test. A line that no test runs is code nothing asked for, which you remove; a missing case, which you add; or an exception, such as code that connects to the UI and is checked by hand, which the report names with its reason. Without a coverage tool, say so in the report, and list adding one, as a coverage command in the check table, among its open decisions for planning, where the user may make it a proposal. Install nothing: choosing a test dependency is a `testing` decision.
 3. **Inject errors.** For each boundary and each number the rule fixes in the changed code, make it wrong for a moment: move a comparison by one, such as `>=` to `>`; change the constant; invert the condition; delete the branch. Run the tests: at least one must fail. An injected error that no test catches is a missing case, which you add, or code that nothing needs, which you remove. When the project has a mutation testing tool, such as Stryker, mutmut, or cargo-mutants, run it on the changed files instead, and treat each surviving mutant the same way.
    - Tunable data is the exception: the tests read it as input, so changing a value keeps them passing, and the report says so. The data's invariants are proven instead by injecting a violation into the data, such as swapping two rows, and watching the content check fail.
    - Make each injection with an edit that keeps the file's line endings, and check that it applied: an edit that matched nothing proves nothing. Save the diff of the working tree before the first injection, and compare it with the diff after the last, so that no injected error remains even when the tree had other changes.

@@ -1,6 +1,6 @@
 ---
 name: improve-architecture
-description: A survey of an area or the whole repository for structure worth changing, such as shallow modules, details that leak across seams, state with several owners, and files that always change together, starting where changes concentrate, with a before-and-after figure for each candidate and a decision note for the one the user picks; started only by the user.
+description: A survey of an area, or of where changes concentrate, for structure worth changing, with a before-and-after figure for each candidate and a decision note for the one the user picks.
 disable-model-invocation: true
 ---
 
@@ -27,7 +27,7 @@ Done when you have the scope, with its most-changed files and the pairs that cha
 
 ## 2. Survey
 
-When your tools can start sub-agents, the scope goes to fresh ones, on the most capable model available, running in parallel: one per `area/*` label from the Labels line, or per top-level package or directory where the repository has no area labels. A scope of up to a few thousand lines is surveyed in the current context, and so is any scope when you cannot start sub-agents; say so in the report. Give each surveyor this skill's path, its paths, the most-changed files and pairs within them, the notes and documents from step 1, and the constraints. Each returns its candidates in the form of step 3, and changes nothing.
+When your tools can start sub-agents, the scope goes to fresh ones, on the most capable model available, running in parallel: one per `area/*` label from the Labels line, or per top-level package or directory where the repository has no area labels. Give each surveyor this skill's path, its paths, the most-changed files and pairs within them, the notes and documents from step 1, and the constraints. Each returns its candidates in the form of step 3, and changes nothing. A scope of up to a few thousand lines is surveyed in the current context, and so is any scope when you cannot start sub-agents; say so in the report.
 
 Look in the existing code for the flaws listed in step 5 of the `design-interface` skill, and for these signs of friction:
 

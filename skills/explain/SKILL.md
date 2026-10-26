@@ -1,6 +1,6 @@
 ---
 name: explain
-description: Explain a change, a part of the codebase, a concept, a decision, or a failure with figures and a short quiz that checks the reader understood; started only by the user.
+description: Explain a change, a part of the codebase, a concept, a decision, or a failure, with figures and a short quiz.
 disable-model-invocation: true
 ---
 
@@ -40,9 +40,9 @@ Done when every learning goal has material with its sources, such as paths and c
 
 ## 3. Build the explanation
 
-Lead with the main point in one sentence. Then give one section per learning goal, or per step of a flow, each with a few short paragraphs and at least one figure; a table counts as a figure. Material that the table above asks for but that serves no single goal, such as risks or a reading order, goes into one short closing section. Get the figures from the `visualize` skill, which also builds the page when the size calls for one.
+Lead with the main point in one sentence. Then give one section per learning goal, or per step of a flow, each with a few short paragraphs and at least one figure; a table counts as a figure. Material that the table above asks for but that serves no single goal, such as risks or a reading order, goes into one short closing section. Get the figures from the `visualize` skill.
 
-Use short real excerpts with their paths; when no real excerpt shows the point, a made-up example is allowed if it is labeled as one. Write in the reader's language and revise the text with the `plain-language` skill; the quiz takes the place of its new-reader check. Open questions from the exploration go in a clearly marked box rather than out of sight.
+Use short real excerpts with their paths; when no real excerpt shows the point, a made-up example is allowed if it is labeled as one. Write in the reader's language and revise the text with the `plain-language` skill; the quiz takes the place of its new-reader check. Open questions from the exploration go in a clearly marked box.
 
 ## 4. Quiz
 
@@ -53,12 +53,12 @@ Write three to five questions for a page, or one or two in a reply. Each questio
 - **Wrong options come from real misconceptions:** the behavior before the change, a plausible owner that is not the real one, the alternative that lost.
 - **Feedback for every option:** why it is right or wrong, with a link to the section that explains it.
 
-On a page, the first choice on a question locks it and shows that option's feedback; the score appears once every question is answered; and a button copies the answers as plain text, each question with the chosen and the correct option, for the user to paste into the conversation. Make the copy button fall back to a selectable text box when the clipboard is unavailable. In a reply, list the options, wait for the user's answers, then give the feedback.
+On a page, the first choice on a question locks it and shows that option's feedback; the score appears once every question is answered; and a button copies the answers as plain text, each question with the chosen and the correct option, for the user to paste into the conversation, falling back to a selectable text box when the clipboard is unavailable. In a reply, list the options, wait for the user's answers, then give the feedback.
 
-When the user's answers come back with mistakes, explain each missed goal again in the conversation with a different figure or example, not by repeating the same text.
+When the user's answers come back with mistakes, explain each missed goal again in the conversation with a different figure or example.
 
 ## 5. Deliver
 
-For a page, write and open it through the `visualize` skill, whose temporary-directory rule applies, and give the user its path with a two-sentence summary: the main point, and what the page covers. For a reply, give the explanation and the quiz.
+For a page, write and open it through the `visualize` skill, and give the user its path with a two-sentence summary: the main point, and what the page covers. For a reply, give the explanation and the quiz.
 
 Done when the reader has the explanation and the quiz.

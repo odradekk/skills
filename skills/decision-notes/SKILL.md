@@ -1,6 +1,6 @@
 ---
 name: decision-notes
-description: Write proposals for a repository's decision notes, the agent-written RFCs that record what the user decided, why, and which alternatives lost, and move notes through their lifecycle on the user's word: accepting, rejecting, superseding, and archiving them, after which they are frozen. Use when planning substantial work, recording a decision whose rationale code and tests cannot carry, when the user accepts, rejects, or replaces a decision, when archiving notes, citing a note from code, or adopting existing ADRs.
+description: Write and revise proposals in a repository's decision notes, the record of what the user decided and why, and move notes through accept, reject, supersede, and archive on the user's word. Use when planning substantial work, recording a decision that code cannot explain, when the user accepts, rejects, or replaces a decision, and when archiving notes, citing a note from code, or adopting ADRs.
 ---
 
 # Decision notes
@@ -69,7 +69,7 @@ The first three lines are exactly:
 Status: <status>
 ```
 
-The status agrees with the lifecycle folder: `Status: proposed`, `Status: accepted`, or `Status: rejected — <why, in one line>`. An archived note keeps its status and has `Archived: YYYY-MM-DD` on line 4. Further header lines, before the blank line that opens the body, link superseding notes: `Supersedes: <ID>`, `Superseded by: <ID>`, or, for part of a decision, `Supersedes in part: <ID> — <the part>` and `Superseded in part by: <ID> — <the part>`. Only `note_lifecycle.py` writes header lines.
+The status agrees with the lifecycle folder: `Status: proposed`, `Status: accepted`, or `Status: rejected — <why, in one line>`. An archived note keeps its status and has `Archived: YYYY-MM-DD` on line 4. Further header lines, before the blank line that opens the body, link superseding notes: `Supersedes: <ID>`, `Superseded by: <ID>`, or, for part of a decision, `Supersedes in part: <ID> — <the part>` and `Superseded in part by: <ID> — <the part>`. Only `note_lifecycle.py` writes these lines.
 
 The body opens with `## Problem`, written so it stands without the solution. Free-form technical sections, such as a data format or a module diagram, may sit between the required ones:
 
@@ -79,9 +79,9 @@ The body opens with `## Problem`, written so it stands without the solution. Fre
 | `rejected` | Problem, Proposal, Alternatives considered |
 
 - **Proposal:** the change decided. It is written while the note is a proposal and stays exactly as the user accepted it.
+- **Alternatives considered:** each alternative that was really weighed and why it lost, one paragraph per alternative that starts with the alternative in bold. A decision recorded without the options it beat gets argued again.
 - **Acceptance criteria:** the observable state that means done.
 - **Risks:** what could go wrong, and what the change knowingly gives up.
-- **Alternatives considered:** each genuine alternative and why it lost, one paragraph per alternative that starts with the alternative in bold. A decision recorded without the options it beat gets argued again. Record the alternatives that were really weighed.
 
 A section may be one sentence; its length follows the decision. Headings stay in English whatever the body language, because the verifier matches them. Revise every proposal you write with the `plain-language` skill, including its new-reader check.
 
@@ -99,13 +99,13 @@ A section may be one sentence; its length follows the decision. Headings stay in
 
 ## Accept, reject, and supersede
 
-Each is the user's decision, carried out by `note_lifecycle.py` only after the user says so:
+Each runs the matching `note_lifecycle.py` command once the user says so:
 
 - **Accept** a proposal when the user accepts it. Work starts on accepted notes only, and tickets are published for them (see the `note-to-tickets` skill).
 - **Reject** a proposal when the user declines it, with the reason in one line, and close its open tickets, if any, with the reason and the note ID.
 - **Supersede** when the user accepts a note that replaces an accepted one: accept the new note, then run `supersede <new ID> <old ID>`. It writes the link into both notes, and archives the old note when the whole decision is replaced. With `--part "<the part>"`, the old note stays accepted for the rest, with the part named in both links.
 
-When work runs into an accepted note, the note does not change. The work reports the conflict, and the user decides whether to plan again: a new proposal for the part in question, which supersedes that part of the old note once accepted, while the rest of the old note stays as it was.
+When work reports a conflict with an accepted note, the user decides whether to plan again: a new proposal for the part in question, which supersedes only that part once accepted.
 
 ## Archive
 
@@ -114,13 +114,13 @@ Archive keeps the set of accepted notes, the constraints every skill reads, smal
 - **Keep accepted** a note while its rationale, alternatives, ownership boundary, negative guarantee, stored or wire format, security rule, or reintroduction condition is likely to guide a change.
 - **Archive** an accepted note when its work is done and it is unlikely to guide future work, but its rationale is worth keeping as history; and one the user replaced as a whole, which `supersede` archives.
 - **Archive** a rejected note when its idea no longer tempts anyone.
-- **Never archive a proposal:** an obsolete one is rejected instead.
+- **Reject an obsolete proposal**, so its reason stays; one that nobody discussed or relied on may be deleted during planning instead.
 
-Nothing frozen is ever deleted. A proposal that nobody relied on may be deleted during planning; one that was discussed is rejected, so its reason stays.
+Nothing frozen is ever deleted.
 
 Archiving changes what counts as current, so it is the user's decision. Present the candidates with your reasons, state the borderline ones as such, and run `archive <ID>` for each one the user agrees to. The first archive writes `archived/` to `<notes>/.rgignore`, so searches through the notes directory skip history; search the archive by naming its directory.
 
-Calibration examples, from the DeepSeek Harness notes this workflow is adapted from; the word counts show that size is not the test:
+Calibration examples from another project's notes; the word counts show that size is not the test:
 
 - Archive: a collapsed sidebar control rail, 533 words. A closed, minor UI behavior.
 - Keep: event-sourced sessions, 248 words. A foundational authority and durability boundary.
@@ -140,7 +140,7 @@ The comment still states the local facts, such as what the code guarantees; the 
 
 A citation stays valid when its note is archived. Read it by the note's lifecycle:
 
-- **accepted:** a constraint. A change to that code follows the note; a change that cannot is reported as a conflict for planning, and the note stays as it is.
+- **accepted:** a constraint. A change to that code follows the note, or is reported as a conflict for planning.
 - **archived:** history. It explains why the code is the way it is and constrains nothing. A `Superseded by` line leads to the note that holds the decision now.
 - **rejected:** a guardrail against the idea it declined.
 
@@ -163,6 +163,6 @@ Run the verifier from this skill's directory, using `python3` where `python` is 
 python <this skill's directory>/scripts/verify_notes.py <notes-dir> --base <merge-base>
 ```
 
-`<merge-base>` is `git merge-base HEAD origin/<base branch>`; omit `--base` when there is no remote base. The verifier checks the folder layout and filenames, the header and its agreement with the folder, the header lines and that every supersession link has its counterpart, and the required sections. In proposals, it also checks relative links and `Decision note: <ID>` references, and rejects a path link to another note. Inside a git repository, it checks every `Decision note: <ID>` citation in the files outside the notes directory that git tracks or does not ignore: the ID must name a note. With `--base`, it fails when a frozen note that existed at the base was changed, moved, or deleted since, other than by `note_lifecycle.py`. It exits 0 when clean.
+`<merge-base>` is `git merge-base HEAD origin/<base branch>`; omit `--base` when there is no remote base. The verifier checks the folder layout and filenames, the header and its agreement with the folder, the header lines and that every supersession link has its counterpart, and the required sections. In proposals, it also checks relative links and `Decision note: <ID>` references, and rejects a path link to another note. Inside a git repository, it checks every `Decision note: <ID>` citation in the files outside the notes directory that git tracks or does not ignore: the ID must name a note. With `--base`, it fails when a frozen note that existed at the base was changed, moved, or deleted since, other than by `note_lifecycle.py`.
 
 Done when the verifier exits 0. Report the proposals you wrote or revised, and each lifecycle move the user asked for.

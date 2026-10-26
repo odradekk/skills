@@ -1,11 +1,11 @@
 ---
 name: implement
-description: Carry one piece of work from its intent to reviewed code without stopping, by designing the interface with design-interface and building it test-first with tdd, fixing a defect with diagnose-bug, or restructuring code with refactor, then cleaning it up with simplify-change, and reviewing it with the repository's own code review skill, fixing the findings that hold. Use when the user asks to implement a ticket, a decision note's proposal, a feature, or a fix, and when another skill needs a change built.
+description: 'Carry one ticket, accepted decision note, or request to reviewed code without stopping: design-interface and tdd, diagnose-bug, or refactor, then simplify-change and the repository''s own review. Use when the user asks to implement a ticket, a decision note, a feature, or a fix.'
 ---
 
 # Implement
 
-This skill runs the development workflow for one piece of work: one ticket, one proposal small enough for one pull request, or one request. Each stage is its own skill. This skill gives each stage its input, acts on its report, and carries forward what it cannot settle. It runs without stopping for anyone: the user's request starts it, and its report, with the decisions it leaves to the user, ends it. It commits or opens a pull request only when the user asked for one.
+This skill runs the development workflow for one piece of work: one ticket, one accepted decision note small enough for one pull request, or one request. Each stage is its own skill. This skill gives each stage its input, acts on its report, and carries forward what it cannot settle. It runs without stopping for anyone: the user's request starts it, and its report, with the decisions it leaves to the user, ends it.
 
 The stages run in this context, and the rules each stage's skill sets for sub-agents apply, such as fresh reviewers and verifiers.
 
@@ -15,7 +15,7 @@ Read the repository's `## Agent workflow` section: base branch, Tracker, Decisio
 
 - **The intent:**
   - **A ticket:** read it through the tool the Tracker line names, with its acceptance criteria, and the decision note it cites by ID.
-  - **A decision note:** only an accepted note is carried out. A proposal is not started: the report says that the user must accept it first, through the `decision-notes` skill. When an accepted note has open tickets, found as the `note-to-tickets` skill finds them, work on the ticket the user named, or else on the first open ticket that nothing blocks, and say which. A proposal without tickets that needs more than one pull request is not started: the report says it needs splitting with the `note-to-tickets` skill.
+  - **A decision note:** only an accepted note is carried out; for a proposal, the report says that the user must accept it first, through the `decision-notes` skill. When an accepted note has open tickets, found as the `note-to-tickets` skill finds them, work on the ticket the user named, or else on the first open ticket that nothing blocks, and say which. An accepted note without tickets that needs more than one pull request is not started: the report says it needs splitting with the `note-to-tickets` skill.
   - **A request** in the conversation.
 - **The kind:** a defect, such as a ticket labeled `kind/bug-fix` or a report that something is broken; a change of structure only, such as a ticket labeled `kind/simplification` or `kind/architecture`, or a request to refactor; or new or changed behavior.
 - **The starting state:** record `git status`. Changes already in the working tree are not part of this work: leave them as they are, and keep a list of the files this run changes.
@@ -47,7 +47,7 @@ Done when `simplify-change` has reported, and each defect it raised is fixed or 
 
 ## 4. Check the trace
 
-This work carries out decisions; it writes none. It changes no decision note: a proposal belongs to planning, and the other notes are frozen.
+This work carries out decisions; it writes and changes no decision note, since a proposal belongs to planning and the other notes are frozen.
 
 - Code this work wrote whose shape the accepted note explains cites that note, as the `decision-notes` skill describes for citing notes from code.
 - A conflict between this work and an accepted note, and a choice that is hard to reverse and that no note settles, go to the report as open decisions for planning. The work keeps to the accepted notes meanwhile.
@@ -56,7 +56,7 @@ Done when every citation is in place, every open decision is in the report, and 
 
 ## 5. Review it
 
-The review belongs to the repository: the skill in its skill directory whose name ends in `-code-review`, other than `deep-code-review` and `setup-code-review`, which the `setup-code-review` skill builds from the project's rules and the failures it has had. Run it on this work: the files this run changed, or the commits it made, with the IDs of the ticket and the decision note, and the pull request description when one exists. When the repository has no such skill, the work stays unreviewed: say so in the report, and recommend `setup-code-review`, which needs the user's priorities. The `deep-code-review` skill is started only by the user and is not part of this workflow.
+The review belongs to the repository: the skill in its skill directory whose name ends in `-code-review`, which the `setup-code-review` skill builds from the project's rules and the failures it has had. `setup-code-review` itself does not count, and neither does `deep-code-review`, which only the user starts. Run the review on this work: the files this run changed, or the commits it made, with the IDs of the ticket and the decision note, and the pull request description when one exists. When the repository has no such skill, the work stays unreviewed: say so in the report, and recommend `setup-code-review`, which needs the user's priorities.
 
 Verify the findings with the `verify-bug` skill, which hands review findings to fresh verifiers, then act on each verdict:
 
@@ -72,7 +72,7 @@ Done when every finding of the last round has a verdict and an outcome.
 
 ## 6. Finish
 
-Run the checks for the whole of this work: the narrowest checks of the check table for every file this run changed, selected as step 3 of the `pre-push-checks` skill selects them, which includes the `decision-notes` verifier when notes changed. When the CI line says that nothing runs the full suite, run the full suite once as well. Fix a failure this work caused by the rules of step 5; a failure that also happens at the merge base, found as step 4 of `pre-push-checks` finds it, goes to the report.
+Run the checks for the whole of this work: the narrowest checks of the check table for every file this run changed, selected as step 3 of the `pre-push-checks` skill selects them, which includes the `decision-notes` verifier when a citation changed. When the CI line says that nothing runs the full suite, run the full suite once as well. Fix a failure this work caused by the rules of step 5; a failure that also happens at the merge base, found as step 4 of `pre-push-checks` finds it, goes to the report.
 
 When the user asked for a commit, commit the files this run changed through the `commit` skill, naming them so that the changes that were there before stay out. When the user asked for a pull request, open it through the `pr` skill after the commit. Both skills apply the ticket references of the Tracker line. Otherwise leave the work uncommitted.
 

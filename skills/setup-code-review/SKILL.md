@@ -1,6 +1,6 @@
 ---
 name: setup-code-review
-description: Create or refresh a repository's own code review skill, built from its documents, its existing checks, the failures in its history, adopted review comments, and the user's priorities, with a source for every check. Use when the user asks for a project-specific code review skill, or to update one after new fixes, decisions, or review feedback.
+description: Create or refresh a repository's own code review skill from its documents, its checks, the failures in its history, adopted review comments, and the user's priorities, with a source for every check. Use when the user asks for a project-specific code review skill, or to update one.
 ---
 
 # Set up a project code review
@@ -20,7 +20,7 @@ When the generated skill already exists, this run is a refresh. Its last line re
 Find the written rules: every `AGENTS.md`, `CONTRIBUTING.md`, architecture and design documents, style guides, accepted decision notes (especially the `architecture` and `process` classes), postmortems, and open issues that state rules. For each source, record:
 
 - **Paths:** which parts of the repository it governs.
-- **Committed or not:** the generated skill is committed, so it can link only to committed files. List uncommitted sources separately; the user decides in step 5 whether to commit them first.
+- **Committed or not:** the generated skill can link only to committed files. List uncommitted sources separately; the user decides in step 5 whether to commit them first.
 - **State:** compare the document with the code. A document is *current* when the code matches it, *target* when it describes a design the code has partly reached (say which parts are done), and *stale* when it names paths, symbols, or behavior the code no longer has (note the lines).
 
 Done when every top-level area of the repository is mapped to the sources that govern it, or marked as having no written rules, and every source has its state.
@@ -54,7 +54,7 @@ These defaults need no question; the generated skill states them, and the user c
 
 - A review covers pull requests, branches, and work committed straight to the base branch.
 - The reviewer runs the checks that are started by hand, choosing them through the `pre-push-checks` skill, and reports the results.
-- Current documents are rules. For a target document, the finished parts are rules; the unfinished parts apply only to code a change newly writes there, and known gaps between them and the code are not findings. Stale documents are not rules for the stale lines; the report in step 7 lists them so someone can fix them.
+- Current documents are rules. For a target document, the finished parts are rules; the unfinished parts apply only to code a change newly writes there, and known gaps between them and the code are not findings. Stale documents are not rules for the stale lines; the report in step 7 lists them.
 
 Run the `grill` skill with:
 
@@ -69,7 +69,7 @@ Done when the user has confirmed the grill record.
 
 Fill in [references/review-skill-template.md](references/review-skill-template.md) from the grill record:
 
-- **Sources of truth:** paths mapped to the committed documents that govern them, as links, with a note on how to apply each target document. The rules stay in those documents.
+- **Sources of truth:** paths mapped to the committed documents that govern them, as links, with a note on how to apply each target document.
 - **Blocking requirements** and **Suggestions:** the confirmed checks, each with its source.
 - **Checked automatically** and **Run by the reviewer:** the two lists from step 3.
 - The last line records the current commit.

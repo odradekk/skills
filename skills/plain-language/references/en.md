@@ -1,7 +1,5 @@
 # English writing reference
 
-Use this file when revising English text. Each category gives the check first, then common patterns and their rewrites. The field's established terms are outside its scope; see "Exceptions" at the end.
-
 ## 1. Structure: redundancy and gaps
 
 Check: state the main point in one sentence, then ask of each paragraph how it relates to the main point or to the paragraph before it, and whether the reader needs it. More text is not better; surplus text buries the point.

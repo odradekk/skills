@@ -1,6 +1,6 @@
 ---
 name: grill
-description: Grill the user about a plan, design, or decision in rounds of numbered questions with recommended answers, until every branch that matters is settled or deferred, and return a record of what was settled and why. Use when the user asks to be grilled or to stress-test a plan, or when another skill needs decisions from the user before it can write its output.
+description: Grill the user in rounds of numbered questions with recommended answers until every branch of a plan, design, or decision is settled or deferred, and return the record. Use when the user asks to be grilled or to stress-test a plan.
 ---
 
 # Grill
@@ -28,7 +28,7 @@ The **frontier** is every open question whose prerequisites are settled.
 
 Open the first round by restating the topic in two or three sentences, without a solution, as the first question, so the user can correct the framing. Add the frontier questions that stay the same however the user corrects the framing.
 
-Each round asks the whole frontier, numbered. A question with options names each option with what it costs and buys, and gives your recommendation with its reason. An open question, such as what else worries the user, has no options and no recommendation. When one question asks the user to rate several items the same way, such as blocking or suggestion for each candidate check, put the items in a table with your recommendation for each. From the second round on, start with the decisions that the previous answers settled.
+Each round asks the whole frontier, numbered; a question that depends on another question still open in the same round belongs to a later round. A question with options names each option with what it costs and buys, and gives your recommendation with its reason. An open question, such as what else worries the user, has no options and no recommendation. When one question asks the user to rate several items the same way, such as blocking or suggestion for each candidate check, put the items in a table with your recommendation for each.
 
 ```markdown
 **Settled since the last round:** <one line per decision; from the second round on>
@@ -45,9 +45,9 @@ Recommended: <option>, because <reason>.
 | <item> | <option> | <reason> |
 ```
 
-Then wait for the answers. Each answer reshapes the tree, so recompute the frontier before the next round. A question that depends on another question still open in the same round belongs to a later round.
+Then wait for the answers. Each answer reshapes the tree, so recompute the frontier before the next round.
 
-- **A question needs a fact:** find it yourself, with a sub-agent where your tools allow. Meanwhile, ask the questions that do not depend on that fact.
+- **A question needs a fact:** look it up, with a sub-agent where your tools allow, and meanwhile ask the questions that do not depend on it.
 - **The user turns an option down:** keep the reason that settled it, either the user's own or the trade-off from your question that the user accepted. When the round shows no reason, ask for one: a rejected option is recorded only with the reason it lost.
 - **The user leans toward an option the settled ground rejected:** show the earlier reasons and ask whether they still hold.
 - **The user defers a question:** mark it deferred and move on.

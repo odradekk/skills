@@ -1,6 +1,6 @@
 ---
 name: note-to-tickets
-description: Split a decision note into tickets on the repository's tracker, drafted while it is a proposal and published once the user accepts it, one pull request each, every ticket pointing back to the note; also trace a note or ticket to its tickets, pull requests, and commits, and find the tickets ready to start. Use when a proposal is ready to be built and its work needs dividing, or when the user asks which tickets, pull requests, or commits belong to a note or a ticket, or what to work on next.
+description: Split a decision note into tickets, one pull request each, drafted while it is a proposal and published once it is accepted, and trace notes and tickets to their pull requests and commits. Use when a note's work needs dividing, or when the user asks which tickets, pull requests, or commits belong to a note or ticket, or what to work on next.
 ---
 
 # Note to tickets
@@ -22,13 +22,13 @@ The note ID is the note's filename without `.md`. It stays the same when the not
 
 Read the `Decision notes`, `Tracker`, and `Labels` lines of the repository's `## Agent workflow` section; if the section is missing, run the `setup-agent-workflow` skill first. The Tracker line names the tool that reaches the tracker, the ticket reference and closing reference, and whether the tracker records blocking relations and labels natively. When it does not say, find out from the tool's help, and suggest refreshing the section with `setup-agent-workflow`. When the tracker is `none`, tell the user that this repository has no tracker to publish to, and stop.
 
-A note in `proposed/` gets its open choices settled and its tickets drafted during planning; its tickets are published once the user has accepted it, so that they point at a decision that no longer changes. An accepted note gets its tickets drafted and published, but cannot change: an open choice a ticket depends on stops that ticket, and the report names it for planning. Rejected and archived notes get no tickets. Read the whole note and the code its Proposal touches. Then search the tracker for tickets whose body contains the note ID, for example `gh issue list --search '"<note ID>" in:body' --state all --json number,title,state`. When tickets exist, this run extends or revises them instead of creating duplicates.
+Tickets are drafted for a note in `proposed/` or `accepted/`; rejected and archived notes get no tickets. Read the whole note and the code its Proposal touches. Then search the tracker for tickets whose body contains the note ID, for example `gh issue list --search '"<note ID>" in:body' --state all --json number,title,state`. When tickets exist, this run extends or revises them instead of creating duplicates.
 
 Done when you know the proposal, the code it touches, the tracker's capabilities, and every existing ticket for the note.
 
 ## 2. Check that the note is settled
 
-List the hard-to-reverse choices the work requires. Each must be settled in the note, in its Proposal or one of its free-form sections. While the note is a proposal, settle every open question that a ticket would depend on through the `grill-decision` skill, and update the note, before drafting that ticket. An accepted note cannot be updated: a ticket that depends on an open question waits, and the report names the question for planning.
+List the hard-to-reverse choices the work requires. Each must be settled in the note, in its Proposal or one of its free-form sections. While the note is a proposal, settle every open question that a ticket would depend on through the `grill-decision` skill, and update the note, before drafting that ticket. An accepted note cannot change: a ticket that depends on an open question waits, and the report names the question for planning.
 
 Done when every choice the tickets depend on is written in the note.
 
@@ -40,8 +40,8 @@ Cut the work into tickets that follow these rules:
 - **A ticket delivers a behavior that a test can check.** Work with no observable result of its own, such as a type or a helper, joins the ticket that uses it. A prefactor ticket is the exception: it changes structure without changing behavior, existing tests verify it, and it comes first.
 - **A wide mechanical change goes expand, migrate, contract.** When one change, such as a rename, breaks call sites across the codebase, the first ticket adds the new form beside the old; migration tickets move the call sites in batches, each blocked by the first; a last ticket, blocked by every batch, deletes the old form.
 - **A risk that must be proven first gets the first ticket.** When the note's Risks name something the rest of the work depends on, such as a performance limit, a spike ticket proves it. Its acceptance criterion is the measured result, recorded in the note.
-- **Blocking edges.** A ticket is blocked by every ticket whose result it needs, and by any ticket that edits the same files, so that parallel implementers never edit the same files at once. Sharing files gives an edge no direction of its own: point it the way the result edges already order the two tickets, and choose freely only when they leave the pair unordered. A ticket that waits only because of shared files says so in its Starting points (see step 4), since the tracker's relation cannot carry the reason.
-- **No cycles.** Put the note's tickets, existing ones included, in an order where every ticket comes after all of its blockers. When no such order exists, the edges form a cycle, and the tickets in it could never start: merge them, or split the part that one of them needs into its own earlier ticket.
+- **Blocking edges.** A ticket is blocked by every ticket whose result it needs, and by any ticket that edits the same files, so that parallel implementers never edit the same files at once. Sharing files gives an edge no direction of its own: point it the way the result edges already order the two tickets, and choose freely only when they leave the pair unordered.
+- **Blockers first.** Put the note's tickets, existing ones included, in an order where every ticket comes after all of its blockers. When no such order exists, the edges form a cycle, and the tickets in it could never start: merge them, or split the part that one of them needs into its own earlier ticket.
 
 Map every acceptance criterion of the note to the tickets that satisfy it. When the tickets fall into groups with no blocking edges between them, the note probably holds several independent decisions: tell the user, and suggest splitting the note before publishing.
 
@@ -69,14 +69,14 @@ Decision note: <note ID>
 
 - `Decision note:` is the exact first line; the trace queries match it.
 - **Not in this ticket** names the neighboring work an implementer would otherwise be tempted to do, with the ticket that owns it. Leave the section out only when nothing adjacent exists.
-- **Starting points** names modules and symbols only, since line numbers and code go stale. It is optional, except for a ticket that waits on another only because both edit the same files: it names those files, the ticket it waits for, and that it does not need that ticket's result.
-- **Blocking edges** go into the tracker's own blocking relation. Only when the tracker has none, add a `## Blocked by` section before Starting points, listing the reference of each ticket that gates this one, or `None`.
+- **Starting points** names modules and symbols only, since line numbers and code go stale. It is optional, except for a ticket that waits on another only because both edit the same files, a reason the tracker's relation cannot carry: it names those files, the ticket it waits for, and that it does not need that ticket's result.
+- **Blocked by** is a section only where the tracker has no blocking relation: put it before Starting points, listing the reference of each ticket that gates this one, or `None`.
 - Constraints that the note already fixes, such as a data format or an interface, are cited by note ID and section name ("see the Wire format section of `<note ID>`"), not copied.
 - Code appears only when a prototype settled something that prose states less precisely, such as a state machine or a schema; quote only the part that carries the decision.
 
 The note's reasons, implementation steps, estimates, priorities, due dates, assignees, and parent tickets stay out of the ticket. When a ticket needs a human, for credentials, a design approval, or a deployment, that step is one of its acceptance criteria.
 
-When the tracker has labels, label each ticket from the `Labels` line: one `kind/*` label, by default the note's class, so a prefactor ticket in a feature proposal is `kind/simplification`; and every `area/*` label whose paths the ticket's work touches, judged from its starting points and the code it will change. Use only the listed labels; when none fits, tell the user that the section needs a refresh through `setup-agent-workflow` before publishing.
+When the tracker has labels, label each ticket from the `Labels` line: one `kind/*` label, the note's class by default, though a prefactor ticket in a feature proposal is `kind/simplification`; and every `area/*` label whose paths the ticket's work touches, judged from its starting points and the code it will change. Use only the listed labels; when none fits, tell the user that the section needs a refresh through `setup-agent-workflow` before publishing.
 
 Revise every title and body with the `plain-language` skill. The implementer starts without your context, so run its new-reader check over the full set of drafts.
 
@@ -88,7 +88,7 @@ Done when the user has approved the drafts.
 
 ## 6. Publish
 
-Publish only the tickets of an accepted note. When the note is still a proposal, the approved drafts wait until the user accepts it through the `decision-notes` skill.
+Publish only the tickets of an accepted note, so that they point at a decision that no longer changes. When the note is still a proposal, the approved drafts wait until the user accepts it through the `decision-notes` skill.
 
 Create the tickets in the order from step 3, blockers first, so that every blocker already exists when a ticket that needs it is created. Create each ticket with its labels and, when the tracker records blocking relations, with its blockers set at creation. Write each body to a temporary file outside the repository. For example, with `gh`:
 

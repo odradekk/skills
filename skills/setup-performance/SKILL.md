@@ -1,13 +1,13 @@
 ---
 name: setup-performance
-description: Create or refresh a repository's performance system, made of scenarios that guard the user operations whose speed or memory matters, measurement code kept as maintained infrastructure under written rules, and a project skill for measuring and optimizing them. Use when the user asks to set up performance testing or a project performance skill, or to update them after the project changes.
+description: 'Create or refresh a repository''s performance system: scenarios for the operations whose speed or memory matters, measurement code under written rules, and a project performance skill. Use when the user asks to set up performance testing or a project performance skill, or to update them.'
 ---
 
 # Set up project performance
 
 What to measure, on which workloads, with which tools, and how much noise is normal are facts of one project. This skill settles them once with the user, builds the measurement code for them, and writes them into a project skill, so that each later optimization starts from a measurement instead of a plan. It produces three things:
 
-- **A decision note** of class `testing`, cited by its ID: the operations guarded and why, their workloads and targets, the options weighed, and where budgets are enforced. It records the choices and the reasons.
+- **A decision note** of class `testing`, cited by its ID: the operations guarded and why, their workloads and targets, the options weighed, and where budgets are enforced.
 - **The measurement infrastructure:** the scenarios, the code they share, and an `AGENTS.md` in the measurement directory that owns the layout and the rules for changing it. Measurement code is project infrastructure, held to the same standards as product code: one place, one way to run it, no copies, and no change without a reason.
 - **The project skill `<repo>-performance`**, named after the repository's directory in lowercase, such as `rpgx-performance`. It lives at `.agents/skills/<repo>-performance/SKILL.md` and is committed with the code. It points to the scenarios, the rules, and the note, and carries the optimization loop.
 
@@ -17,7 +17,7 @@ Read the repository's `## Agent workflow` section: base branch, CI, the table of
 
 When the repository already has its own performance skill, found by the rule in the `measure-performance` skill, this run is a refresh. The skill's last line records the commit its sources were checked up to, and the uncommitted paths that were part of them; steps 2 and 3 cover what changed since that commit, recheck those paths as they stand now, and step 3 audits the infrastructure.
 
-The grill and the report use the conversation's language. The files this skill writes use the language the `Decision notes` line names.
+The grill and the report use the conversation's language. The files this skill writes use the language the `Decision notes` line names: translate the templates' headings and text, and keep front matter keys, commands, paths, and code as they are.
 
 ## 2. Find the operations that matter
 
@@ -51,7 +51,7 @@ On a refresh, audit the infrastructure against its `AGENTS.md`, and record each 
 - a baseline older than the latest change to the code path or the content it measures;
 - measurement code outside the measurement directory, other than the module diagnostics its rules allow, and code that breaks its rules.
 
-Done when every piece of measurement code is listed with its state, and, on a refresh, every audit finding has a proposed fix.
+Done when every piece of measurement code is listed with its state, the tools that work here are listed, and, on a refresh, every audit finding has a proposed fix.
 
 ## 4. Settle the plan with the user
 
@@ -109,9 +109,9 @@ Done when the user has accepted the note, and every guarded operation is either 
    - for changes under the measurement directory: the type check, the tests of the support code, and one sample of each affected scenario;
    - for changes to the code paths and the content that a scenario guards: one sample of that scenario, compared with its baseline and reported, not enforced.
 
-Leave the changes uncommitted unless the user asked for a commit. Then commit them with the `commit` skill, apart from any optimization, and publish the ticket drafts from step 5.
+Leave the changes uncommitted unless the user asked for a commit; then commit them with the `commit` skill, apart from any optimization, and publish the ticket drafts from step 5.
 
-Done when every scenario built in this run runs through the run command, has passed its proofs, and has a recorded baseline and noise.
+Done when the rules are written, the directory is under the project's checks, every new row of the check table has run once, and every scenario built in this run runs through the run command, has passed its proofs, and has a recorded baseline and noise.
 
 ## 7. Write the skill
 
@@ -122,7 +122,7 @@ Fill in [references/performance-skill-template.md](references/performance-skill-
 - **Behavior that must hold:** the functional tests for each guarded operation, or "none: check by hand" with what to check, which names the gap.
 - The last line records the current commit, and the uncommitted paths that were part of what you checked, if any.
 
-Numbers stay in the measurement code and its baselines, where they change with the code; the skill points to them. Write the skill in the language the `Decision notes` line names, translating the template's headings and text, and keep the front matter keys, commands, paths, and code as they are. Revise it with the `plain-language` skill, then show it, or on a refresh show the changes, and write it only after the user approves.
+Numbers stay in the measurement code and its baselines, where they change with the code; the skill points to them. Revise it with the `plain-language` skill, then show it, or on a refresh show the changes, and write it only after the user approves.
 
 ## 8. Report
 

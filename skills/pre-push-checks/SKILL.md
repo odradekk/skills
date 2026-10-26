@@ -1,6 +1,6 @@
 ---
 name: pre-push-checks
-description: Choose and run the smallest set of checks that covers a branch's outgoing changes, mapping each changed path to its narrowest check instead of running the full suite. Use before pushing, before opening a pull request or marking it ready, before claiming that checks pass, and after a rebase or merge rewrites what will be pushed.
+description: Run the narrowest checks that cover a branch's outgoing changes instead of the full suite. Use before pushing, before opening a pull request or marking it ready, before claiming that checks pass, and after a rebase or merge.
 ---
 
 # Pre-push checks
@@ -25,7 +25,7 @@ git merge-base HEAD origin/<base>
 git diff --name-status <merge-base> HEAD
 ```
 
-Checks run on the working tree, but a push carries only commits. Until the working tree matches what will be pushed, a passing check proves nothing about the push. When `git status` shows uncommitted changes, commit the ones that belong to this work with the `commit` skill, and ask the user about the rest.
+Checks run on the working tree, but a push carries only commits, so a passing check proves nothing about the push until the two match. When `git status` shows uncommitted changes, commit the ones that belong to this work with the `commit` skill, and ask the user about the rest.
 
 Done when you have the complete list of paths the push will carry, with their change status.
 
@@ -33,8 +33,8 @@ Done when you have the complete list of paths the push will carry, with their ch
 
 Map every changed path to a row of the table, and fill in concrete targets: the test files that exercise the changed code (found through test naming, imports, or the test layout), the changed files for linters, the affected package for builds.
 
-- **Decision notes changed, or a citation of one did:** run the verifier of the `decision-notes` skill, which sits beside this skill (`../decision-notes/` from this skill's directory): `python <decision-notes directory>/scripts/verify_notes.py <notes-dir> --base <merge-base>`. A citation changed when `git diff --name-only -G "Decision note: " <merge-base> HEAD` lists any file, since it lists the files whose diff adds or removes a line with a `Decision note: <ID>` citation.
-- **Behavior change that no row covers:** run the narrowest existing test that exercises it. When no test exercises it, report the gap; write a test only when the task includes one.
+- **Decision notes changed, or a citation of one did:** run the verifier of the `decision-notes` skill, which sits beside this skill (`../decision-notes/` from this skill's directory): `python <decision-notes directory>/scripts/verify_notes.py <notes-dir> --base <merge-base>`. A citation changed when `git diff --name-only -G "Decision note: " <merge-base> HEAD` lists any file: those are the files whose diff adds or removes a `Decision note: <ID>` line.
+- **Behavior change that no row covers:** run the narrowest existing test that exercises it. When none does, report the gap; write a test only when the task includes one.
 - **Manifests, lockfiles, toolchain, or CI configuration changed:** add the broader rows those files affect, such as the build.
 - **Already covered:** leave out a check that a hook runs at commit or push (the Hooks line), and a check that already passed in this session on the same content.
 - **Full suite:** run it only when the user asks, when diagnosing a CI failure, or when the change reaches the whole repository, such as a toolchain upgrade or shared configuration. Otherwise CI covers it.

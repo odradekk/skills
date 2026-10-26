@@ -1,12 +1,12 @@
 ---
 name: deep-code-review
-description: A strict, user-started review of a change for restructurings that remove concepts while keeping behavior, run by fresh sub-agents and grounded in the decision notes.
+description: A strict review of a change for restructurings that remove concepts while keeping behavior, by fresh reviewers grounded in the decision notes.
 disable-model-invocation: true
 ---
 
 # Deep code review
 
-This review is about structure, not correctness. It looks for restructurings that keep behavior and make branches, modes, flags, helpers, or layers unnecessary, and for changes that leave the code harder to hold in one's head. The project's own review skill (`<repo>-code-review`) checks a change against the project's rules and past failures; run both when both matter. Two other skills remove code instead of judging it: `simplify-change` removes from a change what it adds without need, before its review, and `find-simplifications` surveys code for what the project could stop maintaining, including capabilities worth giving up. This review judges the structure of what remains. Code as it stands, apart from a change, is surveyed by `improve-architecture` for structure worth changing and by `find-simplifications` for what can go.
+This review is about structure, not correctness. It looks for restructurings that keep behavior and make branches, modes, flags, helpers, or layers unnecessary, and for changes that leave the code harder to hold in one's head. The project's own review skill (`<repo>-code-review`) checks a change against the project's rules and past failures; run both when both matter. Two other skills remove code instead of judging it: `simplify-change` removes from a change what it adds without need, before its review, and `find-simplifications` surveys code as it stands, apart from a change, for what the project could stop maintaining, including capabilities worth giving up. This review judges the structure of what remains. Code as it stands is surveyed for structure worth changing by `improve-architecture`.
 
 It only reviews: it reports findings and changes no code.
 
@@ -58,7 +58,7 @@ Start with the largest question: for each meaningful part of the change, would a
 
 Every lens ends with the reader's test: for the values the change introduces or changes, can a reader new to the code say where each comes from and what can change it within half a minute? When the answer means tracing through several layers or holding hidden state in mind, the finding names the layers to cut or the state to narrow.
 
-Every finding carries its evidence:
+Every finding carries its evidence, and one without the sketch and the behavior argument stays out of the report:
 
 - the location, as file and lines;
 - what is wrong, and what it will cost the next change;
@@ -66,9 +66,11 @@ Every finding carries its evidence:
 - what disappears: branches, types, parameters, or files;
 - what keeps behavior the same: the tests that already pin it, or the tests to write before restructuring.
 
-A suggestion without a sketch and a behavior argument stays out of the report. State a major problem as a major problem; do not soften it into a suggestion.
+State a major problem as a major problem; do not soften it into a suggestion.
 
 ## 5. Report
+
+When reviewers ran as sub-agents, check the facts each finding rests on the way the `verify-bug` skill checks a design judgment, such as whether a line exists, the logic is really duplicated, or the cited tests pin the behavior. Pass each finding on as reported, with your reasons beside it where you disagree with its judgment.
 
 Order the findings by impact: structural regressions; missed restructurings that would remove a meaningful part of the change; scattered special cases; contract problems; size and decomposition; the rest. Prefer a few well-supported findings to many small ones, and leave out cosmetic notes when structural findings exist.
 
@@ -79,6 +81,6 @@ Mark where each finding belongs:
 
 End with a verdict. The change meets the bar when it has no structural regression, no visible missed restructuring that would remove a meaningful part of it, no file pushed past the size limit without a stated reason, no new scattered special cases, and no indirection or contract churn that hides the design.
 
-When reviewers ran as sub-agents, pass their findings on as reported. Check the facts each finding rests on the way the `verify-bug` skill checks a design judgment, such as whether a line exists, the logic is really duplicated, or the cited tests pin the behavior; where you disagree with a judgment, add your reasons beside the finding instead of removing it. Write the report in the notes language from the Agent workflow section, by the principles of the `plain-language` skill.
+Write the report in the notes language from the Agent workflow section, by the principles of the `plain-language` skill.
 
 Done when every finding has its location, evidence, and destination, and the verdict is stated.

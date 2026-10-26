@@ -1,11 +1,11 @@
 ---
 name: grill-decision
-description: Settle a design decision with the user through the grill skill, then record the outcome as decision notes. Use when the user asks to grill a decision that should become a decision note, or when a decision note is due but its choice or alternatives were never weighed with the user.
+description: Settle a decision with the user through the grill skill and record it as decision-note proposals. Use when the user asks to grill a decision that should become a note, or when a note is due but its alternatives were never weighed with the user.
 ---
 
 # Grill a decision
 
-A decision note and a grill record have the same parts. The note's Proposal or Decision is the path the user chose; its Alternatives considered are the options the user turned down, each with the reason that settled it. This skill grounds the interview in the repository's notes, runs it through the `grill` skill, and turns the record into notes without inventing anything.
+A decision note and a grill record have the same parts. The note's Proposal is the path the user chose; its Alternatives considered are the options the user turned down, each with the reason that settled it. This skill grounds the interview in the repository's notes, runs it through the `grill` skill, and turns the record into notes without inventing anything.
 
 ## 1. Ground the topic
 
@@ -46,7 +46,7 @@ Map the record onto the sections of the `decision-notes` format:
 
 A record that settled several independent decisions, each with its own trade-off, produces one note per decision; a sub-decision that depends on one choice stays in that choice's note. Write each note as current-state prose about the decision and its reasons. Round numbers, attributions such as "the user said", and the course of the interview stay out of the note.
 
-Revise the drafts with the `plain-language` skill, then show them, with the lifecycle and class folder you chose for each, and wait for the user to confirm them.
+Revise the drafts with the `plain-language` skill, then show them, with the class folder you chose for each, and wait for the user to confirm them.
 
 ## 4. Record them
 

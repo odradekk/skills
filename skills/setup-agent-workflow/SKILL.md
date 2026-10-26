@@ -1,13 +1,13 @@
 ---
 name: setup-agent-workflow
-description: Create or refresh a repository's Agent workflow section in AGENTS.md, the per-repository settings that the other workflow skills read, including the issue label scheme, and install git hooks that remove AI attribution from commit messages and keep files small enough for agents to read whole. Use when the user asks to set up or update the agent workflow, the issue labels, AI attribution stripping, or a file size limit for a repository, or when another skill finds the section missing or out of date.
+description: Create or refresh a repository's Agent workflow section in AGENTS.md, the settings the other workflow skills read, with its issue labels and the git hooks for AI attribution, frozen decision notes, and file size. Use when the user asks to set up or update the agent workflow, the labels, attribution stripping, or a file size limit, or when a skill finds the section missing.
 ---
 
 # Set up the agent workflow
 
-The workflow skills carry method; the `## Agent workflow` section carries one repository's facts. It caches what an agent cannot look up in one step: which branch is the base, where decision notes live and in which language, which tracker holds tickets, which labels classify issues, the house style for prose, what hooks and CI already run, and which command is the narrowest check for each kind of change. Lookups that take one file or one command, such as the script list in `package.json`, stay in the environment.
+The workflow skills carry method; the `## Agent workflow` section carries one repository's facts, the ones an agent cannot look up in one step. Lookups that take one file or one command, such as the script list in `package.json`, stay in the environment.
 
-Everything the workflow installs lives under `.agents/`, which one set of files shares across agents; Claude Code reaches the project skills through a `.claude/skills` link. [references/layout.md](references/layout.md) shows the layout.
+Everything the workflow installs lives under `.agents/`, so one set of files serves every agent; Claude Code reaches the project skills through a `.claude/skills` link. [references/layout.md](references/layout.md) shows the layout.
 
 ## The section
 
@@ -20,7 +20,8 @@ Maintained with the `setup-agent-workflow` skill. Edit values freely; keep the f
 
 - Base branch: `main`
 - Decision notes: `.agents/notes/`, written in English. Every decision record, ADRs included, is a decision note, written during planning with the `decision-notes` skill; work carries out accepted notes and never edits a note. Notes in `accepted/`, `rejected/`, and `archived/` are frozen and read-only: only the `decision-notes` skill's `note_lifecycle.py` changes them, on the user's word.
-- Tracker: GitHub issues on `origin`, through `gh`. Tickets are referenced as `#N`, and a pull request closes one with `Fixes #N`. The tracker records blocking relations and labels natively. Tickets for decision notes follow the `note-to-tickets` skill. The pull request that completes a ticket carries the closing reference in its description, and its commits carry no ticket reference. Work committed straight to the base branch, without a pull request, carries the ticket reference in its commits and the closing reference in the one that completes the ticket.- Labels: every issue and pull request gets exactly one `kind/*` label and every `area/*` label that applies. Use only the labels listed here; when none fits, refresh this section with the `setup-agent-workflow` skill.
+- Tracker: GitHub issues on `origin`, through `gh`. Tickets are referenced as `#N`, and a pull request closes one with `Fixes #N`. The tracker records blocking relations and labels natively. Tickets for decision notes follow the `note-to-tickets` skill. The pull request that completes a ticket carries the closing reference in its description, and its commits carry no ticket reference. Work committed straight to the base branch, without a pull request, carries the ticket reference in its commits and the closing reference in the one that completes the ticket.
+- Labels: every issue and pull request gets exactly one `kind/*` label and every `area/*` label that applies. Use only the labels listed here; when none fits, refresh this section with the `setup-agent-workflow` skill.
   - `kind/feature`: a new user- or model-facing capability. `kind/bug-fix`: corrects a defect. `kind/simplification`: removes code, behavior, or surface without adding capability. `kind/architecture`: the structure of the shipped code. `kind/process`: tooling and workflow around the code. `kind/testing`: test infrastructure and strategy.
   - `area/api`: `src/api/**`. `area/ui`: `src/ui/**`, `src/styles/**`. `area/docs`: `docs/**`, `README.md`.
 - Prose: documents, decision notes, tickets, pull request descriptions, and commit bodies are revised with the `plain-language` skill. House style: sentence-case headings; straight quotes in English text.
@@ -59,14 +60,14 @@ Read each value from a file or a command:
 - **Base branch:** `git symbolic-ref --short refs/remotes/origin/HEAD`, without the `origin/` prefix. If that ref is unset, use the `HEAD branch` line of `git remote show origin`. Without a remote, it is a question for the user.
 - **Toolchain:** the manifests at the root and in each workspace package (`package.json` scripts, `Makefile`, `justfile`, `Taskfile.yml`, `pyproject.toml`, `tox.ini`, `noxfile.py`, `Cargo.toml`, `go.mod`, `*.sln` or `*.csproj`, `build.gradle`, `pom.xml`, `CMakeLists.txt`) and the test directory layout.
 - **Hooks:** `git config core.hooksPath`, `.husky/`, `lefthook.yml`, `.pre-commit-config.yaml`, and non-sample files in `.git/hooks/`. Record what each hook runs.
+- **Hook checks:** whether the attribution check (`.agents/scripts/strip_attribution.py` and its hooks), the file size check (`.agents/file-size.json` and `.agents/scripts/check_file_size.py`), and the frozen-notes check (`.agents/scripts/note_lifecycle.py` and its hooks) are installed, and whether the installed `note_lifecycle.py` matches the one in the `decision-notes` skill. On a refresh, `python .agents/scripts/check_file_size.py --all` shows whether the repository still passes the size limit.
 - **CI:** `.github/workflows/`, `.gitlab-ci.yml`, and other CI configuration. Record which checks run on pull requests and on which platforms.
 - **Tracker:** where tickets live: the issues of the platform that hosts `origin`, when they are enabled (on GitHub, `gh repo view --json hasIssuesEnabled`), or another tracker the user names, such as Linear or Jira. Record the tool that reaches it, a command-line tool or MCP tools; the ticket reference format; the reference a pull request uses to close a ticket; and whether the tracker records blocking relations and labels natively. Take these from the tool's help or the tracker's documentation. Without a tracker, the line reads `Tracker: none`, without the ticket conventions.
 - **Labels:** when the tracker has labels, its current labels and a draft of the scheme, as [references/labels.md](references/labels.md) describes. Otherwise the line reads `Labels: none`.
 - **Existing decision records:** `docs/adr/`, `docs/decisions/`, `adr/`, `doc/adr/`, `.agents/notes/`, `docs/rfcs/`, or ADR-style files elsewhere.
+- **Notes language:** the language of the repository's existing docs.
 - **An older layout of this workflow:** decision notes with lifecycle folders in `docs/decisions/`, hooks in `.githooks/`, hook scripts in `scripts/`, hook settings at the root, or project skills in a real `.claude/skills/` directory. [references/layout.md](references/layout.md) lists what moves where.
 - **House style:** the prose rules that a style guide (such as `CONTRIBUTING.md` or a docs style page) or a prose linter configuration (such as `.vale.ini` or `.markdownlint*`) states. Record only stated rules; with none, write `House style: none`.
-- **Notes language:** the language of the repository's existing docs.
-- **Hook checks:** whether the attribution check (`.agents/scripts/strip_attribution.py` and its hooks), the file size check (`.agents/file-size.json` and `.agents/scripts/check_file_size.py`), and the frozen-notes check (`.agents/scripts/note_lifecycle.py` and its hooks) are installed, and whether the installed `note_lifecycle.py` matches the one in the `decision-notes` skill. On a refresh, `python .agents/scripts/check_file_size.py --all` shows whether the repository still passes the size limit.
 
 Done when every field has a value backed by a file or command output, or is listed as a question for the user.
 
@@ -84,7 +85,16 @@ Done when every row was run, or is a broad command you confirmed exists.
 
 ### 5. Confirm with the user
 
-Show the drafted section, or on a refresh only the differences from the current one. Ask all open questions in one message: the base branch when detection was ambiguous, the tracker, the label scheme with the plan for each existing label (see [references/labels.md](references/labels.md)), the notes directory (an existing records directory, otherwise `.agents/notes/`), the move of an older layout of this workflow to `.agents/` when one exists, the notes language, when records in another format exist, whether to migrate them now, and which hook checks to install that are not installed yet: the attribution check, recommended for every repository; the frozen-notes check, recommended for every repository with decision notes; and the file size check, with its preview (see [references/hooks.md](references/hooks.md)).
+Show the drafted section, or on a refresh only the differences from the current one. Ask all open questions in one message:
+
+- the base branch, when detection was ambiguous;
+- the tracker;
+- the label scheme, with the plan for each existing label (see [references/labels.md](references/labels.md));
+- the notes directory: an existing records directory, otherwise `.agents/notes/`;
+- the move of an older layout of this workflow to `.agents/`, when one exists;
+- the notes language;
+- whether to migrate records in another format now, when they exist;
+- which hook checks to install that are not installed yet: the attribution check, recommended for every repository; the frozen-notes check, recommended for every repository with decision notes; and the file size check, with its preview (see [references/hooks.md](references/hooks.md)).
 
 Done when the user has approved the section.
 
